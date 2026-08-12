@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="384" height="128" viewBox="0 0 384 128">
+  <rect width="384" height="128" fill="none"/>
+  <image href="source.png" x="6" y="2" width="82" height="124" preserveAspectRatio="xMidYMid meet"/>
+  <image href="source.png" x="108" y="-1" width="78" height="127" preserveAspectRatio="xMidYMid meet"/>
+  <image href="source.png" x="198" y="2" width="82" height="124" preserveAspectRatio="xMidYMid meet"/>
+  <image href="source.png" x="300" y="-1" width="78" height="127" preserveAspectRatio="xMidYMid meet"/>
+</svg>
