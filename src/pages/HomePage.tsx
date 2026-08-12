@@ -5,9 +5,11 @@ export function HomePage() {
   return (
     <main className="page home-page">
       <nav className="topbar">
-        <Link href="/" className="brand">LegalAI</Link>
+        <Link href="/home" className="brand">LegalAI</Link>
         <div className="nav-group">
-          <Link href="/game" className="nav-link">Игра</Link>
+          <Link href="/auth" className="nav-link">Войти</Link>
+          <Link href="/register" className="nav-link">Регистрация</Link>
+          <Link href="/register" className="nav-link">Игра</Link>
           <Link href="/history" className="nav-link">История</Link>
         </div>
       </nav>
@@ -17,11 +19,12 @@ export function HomePage() {
           <p className="eyebrow">Юридический помощник для учебного проекта</p>
           <h1>LegalAI</h1>
           <p className="hero__text">
-            Опиши ситуацию простыми словами, а приложение подскажет тему, возможные права и следующие шаги.
+            Опиши ситуацию простыми словами, а приложение подскажет тему,
+            возможные права и следующие шаги.
           </p>
           <div className="hero-actions">
             <Link href="/analyze" className="primary-action">Разобрать ситуацию</Link>
-            <Link href="/game" className="secondary-action">Играть в Юрфак</Link>
+            <Link href="/register" className="secondary-action">Играть в Юрфак</Link>
           </div>
         </div>
         <div className="hero__panel">
@@ -48,4 +51,3 @@ export function HomePage() {
     </main>
   );
 }
-

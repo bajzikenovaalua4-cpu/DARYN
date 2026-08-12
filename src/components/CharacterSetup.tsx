@@ -1,0 +1,78 @@
+import { useState } from 'react';
+import { characters, type CharacterId } from '../lib/characters';
+import type { PlayerGender, PlayerProfile } from '../lib/visualNovelData';
+
+type CharacterSetupProps = {
+  onComplete: (profile: PlayerProfile) => void;
+  onBack: () => void;
+};
+
+type SetupStep = 'character' | 'name';
+
+const cyrillicName = /^[А-Яа-яЁёІіӘәҒғҚқҢңӨөҰұҮүҺһ -]{2,32}$/;
+
+const genderByCharacter: Record<CharacterId, PlayerGender> = {
+  character1: 'male',
+  character2: 'female',
+};
+
+export function CharacterSetup({ onComplete, onBack }: CharacterSetupProps) {
+  const [step, setStep] = useState<SetupStep>('character');
+  const [characterId, setCharacterId] = useState<CharacterId>('character1');
+  const [name, setName] = useState('');
+  const [touched, setTouched] = useState(false);
+  const validName = cyrillicName.test(name.trim());
+
+  const submitName = () => {
+    setTouched(true);
+    if (!validName) return;
+
+    onComplete({
+      name: name.trim(),
+      characterId,
+      gender: genderByCharacter[characterId],
+    });
+  };
+
+  if (step === 'name') {
+    return (
+      <section className="vn-panel vn-setup">
+        <button className="vn-secondary" onClick={() => setStep('character')}>Назад</button>
+        <span className="vn-kicker">Шаг 3</span>
+        <h1>Как тебя зовут?</h1>
+        <label className="vn-name-field">
+          Введите имя на кириллице
+          <input
+            value={name}
+            onBlur={() => setTouched(true)}
+            onChange={(event) => setName(event.target.value)}
+            placeholder="Например: Алим"
+          />
+        </label>
+        {touched && !validName && <p className="vn-error">Имя должно быть непустым и содержать кириллические буквы.</p>}
+        <button className="vn-primary" onClick={submitName}>Продолжить</button>
+      </section>
+    );
+  }
+
+  return (
+    <section className="vn-panel vn-setup">
+      <button className="vn-secondary" onClick={onBack}>Назад</button>
+      <span className="vn-kicker">Шаг 2</span>
+      <h1>Выбери персонажа</h1>
+      <div className="vn-character-grid">
+        {Object.values(characters).map((character) => (
+          <button
+            key={character.id}
+            className={characterId === character.id ? 'vn-character-card is-active' : 'vn-character-card'}
+            onClick={() => setCharacterId(character.id)}
+          >
+            <img className="vn-character-image" src={character.preview} alt={character.title} />
+            <b>{character.id === 'character1' ? 'Мужской' : 'Женский'}</b>
+          </button>
+        ))}
+      </div>
+      <button className="vn-primary" onClick={() => setStep('name')}>Продолжить</button>
+    </section>
+  );
+}
