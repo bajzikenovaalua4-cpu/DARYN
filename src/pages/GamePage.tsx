@@ -8,7 +8,9 @@ import { LocationScene } from '../components/LocationScene';
 import { LocationSelect } from '../components/LocationSelect';
 import { NovelAuthGate } from '../components/NovelAuthGate';
 import { SecretScene } from '../components/SecretScene';
+import { ThemeSettings } from '../components/ThemeSettings';
 import { characters } from '../lib/characters';
+import { defaultInterfaceTheme, type InterfaceThemeId } from '../lib/interfaceThemes';
 import {
   emptyProgress,
   loadLocalProgress,
@@ -32,11 +34,15 @@ type GameScreen = 'setup' | 'confirm' | 'locations' | 'scene' | 'dialogue' | 're
 
 const guestKey = 'law-quest-guest';
 const guestUserId = 'guest';
+const themeKey = 'law-quest-interface-theme';
 
 export function GamePage() {
   const [, setLocation] = useLocation();
   const [session, setSession] = useState<Session | null>(null);
   const [isGuest, setIsGuest] = useState(() => window.localStorage.getItem(guestKey) === 'true');
+  const [interfaceTheme, setInterfaceTheme] = useState<InterfaceThemeId>(() => (
+    (window.localStorage.getItem(themeKey) as InterfaceThemeId | null) ?? defaultInterfaceTheme
+  ));
   const [progress, setProgress] = useState<NovelProgress>(emptyProgress);
   const [screen, setScreen] = useState<GameScreen>('setup');
   const [activeLocationId, setActiveLocationId] = useState<LocationId>('school');
@@ -48,6 +54,7 @@ export function GamePage() {
     () => novelLocations.find((location) => location.id === activeLocationId) ?? novelLocations[0],
     [activeLocationId],
   );
+  const shellClassName = `vn-shell theme-${interfaceTheme}`;
 
   const completedNpcIds = useMemo(
     () => progress.completed.map((item) => item.npcId),
@@ -83,6 +90,15 @@ export function GamePage() {
     setProgress(nextProgress);
     saveLocalProgress(userId, nextProgress);
   };
+
+  const changeInterfaceTheme = (themeId: InterfaceThemeId) => {
+    setInterfaceTheme(themeId);
+    window.localStorage.setItem(themeKey, themeId);
+  };
+
+  const themeSettings = (
+    <ThemeSettings value={interfaceTheme} onChange={changeInterfaceTheme} />
+  );
 
   const completeSetup = (profile: PlayerProfile) => {
     const nextProgress = { ...progress, profile };
@@ -142,7 +158,8 @@ export function GamePage() {
 
   if (!canPlay) {
     return (
-      <main className="vn-shell">
+      <main className={shellClassName}>
+        {themeSettings}
         <NovelAuthGate session={session} />
       </main>
     );
@@ -150,7 +167,8 @@ export function GamePage() {
 
   if (!progress.profile || screen === 'setup') {
     return (
-      <main className="vn-shell">
+      <main className={shellClassName}>
+        {themeSettings}
         <CharacterSetup onComplete={completeSetup} onBack={exitToRegister} />
       </main>
     );
@@ -160,7 +178,8 @@ export function GamePage() {
     const character = characters[progress.profile.characterId];
 
     return (
-      <main className="vn-shell">
+      <main className={shellClassName}>
+        {themeSettings}
         <section className="vn-panel vn-confirm">
           <button className="vn-secondary" onClick={resetPlayerSetup}>Назад</button>
           <span className="vn-kicker">Шаг 4</span>
@@ -179,7 +198,8 @@ export function GamePage() {
 
   if (screen === 'dialogue' && activeNpc) {
     return (
-      <main className="vn-shell">
+      <main className={shellClassName}>
+        {themeSettings}
         <DialoguePanel
           location={activeLocation}
           npc={activeNpc}
@@ -194,7 +214,8 @@ export function GamePage() {
 
   if (screen === 'reward') {
     return (
-      <main className="vn-shell">
+      <main className={shellClassName}>
+        {themeSettings}
         <LocationReward location={activeLocation} onContinue={() => setScreen('locations')} />
       </main>
     );
@@ -202,7 +223,8 @@ export function GamePage() {
 
   if (screen === 'secret') {
     return (
-      <main className="vn-shell">
+      <main className={shellClassName}>
+        {themeSettings}
         <SecretScene legalLiteracy={progress.legalLiteracy} onBack={() => setScreen('locations')} />
       </main>
     );
@@ -210,7 +232,8 @@ export function GamePage() {
 
   if (screen === 'scene') {
     return (
-      <main className="vn-shell">
+      <main className={shellClassName}>
+        {themeSettings}
         <LocationScene
           location={activeLocation}
           characterId={progress.profile.characterId}
@@ -227,7 +250,8 @@ export function GamePage() {
   }
 
   return (
-    <main className="vn-shell">
+    <main className={shellClassName}>
+      {themeSettings}
       <LocationSelect
         locations={novelLocations}
         completedNpcIds={completedNpcIds}

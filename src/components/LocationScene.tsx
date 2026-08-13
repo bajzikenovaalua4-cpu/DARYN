@@ -37,7 +37,10 @@ export function LocationScene({ location, characterId, playerName, completedNpcI
               style={{ left: `${npc.position.left}%`, top: `${npc.position.top}%`, borderColor: npc.color }}
               onClick={() => onNpcClick(npc)}
             >
-              <span className="vn-npc-avatar" style={{ background: npc.color }}>{npc.name.slice(0, 1)}</span>
+              <span className="vn-npc-avatar" style={{ background: npc.color }}>
+                <img src={npc.portrait} alt="" onError={(event) => { event.currentTarget.hidden = true; }} />
+                <span>{npc.name.slice(0, 1)}</span>
+              </span>
               <b>{npc.name}</b>
               {done && <em>✓</em>}
               <span className="vn-dossier">

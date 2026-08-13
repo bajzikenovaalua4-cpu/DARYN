@@ -66,7 +66,10 @@ function CharacterShowcase({ characterId, npc, playerName }: { characterId: Char
         <span>{playerName}</span>
       </div>
       <div className="vn-dialogue-npc" style={{ borderColor: npc.color }}>
-        <span style={{ background: npc.color }}>{npc.name.slice(0, 1)}</span>
+        <span style={{ background: npc.color }}>
+          <img src={npc.portrait} alt="" onError={(event) => { event.currentTarget.hidden = true; }} />
+          <span>{npc.name.slice(0, 1)}</span>
+        </span>
         <b>{npc.name}</b>
         <small>{npc.storyTitle}</small>
       </div>
