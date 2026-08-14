@@ -1,4 +1,13 @@
-﻿export type LegalCategory = 'Права потребителя' | 'Трудовые отношения' | 'Аренда' | 'Полиция' | 'Договор';
+export type LegalCategory =
+  | 'Права потребителя'
+  | 'Трудовые отношения'
+  | 'Аренда'
+  | 'Полиция'
+  | 'Договор'
+  | 'Уголовное право'
+  | 'ДТП'
+  | 'Имущество'
+  | 'Кибербезопасность';
 
 export type LegalAnalysis = {
   id: string;
@@ -52,4 +61,3 @@ export const fallbackAnalysis: Omit<LegalAnalysis, 'id' | 'question' | 'createdA
     'Сформулируйте короткое письменное обращение или претензию.',
   ],
 };
-

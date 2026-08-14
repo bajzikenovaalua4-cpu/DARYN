@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { LegalCasePanel } from './LegalCasePanel';
+import { NpcPortrait } from './NpcPortrait';
 import { SpritePlayer } from './SpritePlayer';
 import type { CharacterId } from '../lib/characters';
 import type { NovelChoice, NovelLocation, NovelNpc } from '../lib/visualNovelData';
@@ -30,6 +32,17 @@ export function DialoguePanel({ location, npc, characterId, playerName, onComple
           <strong>Законодательство РК</strong>
           <p>{choice.law}</p>
           <button className="vn-primary" onClick={() => onComplete(choice)}>Завершить дело</button>
+        </div>
+      </section>
+    );
+  }
+
+  if (line.choices && npc.legalCase) {
+    return (
+      <section className={`vn-dialogue-scene ${location.backgroundClass}`}>
+        <CharacterShowcase characterId={characterId} npc={npc} playerName={playerName} />
+        <div className="vn-dialogue-box">
+          <LegalCasePanel npc={npc} onComplete={onComplete} />
         </div>
       </section>
     );
@@ -67,8 +80,7 @@ function CharacterShowcase({ characterId, npc, playerName }: { characterId: Char
       </div>
       <div className="vn-dialogue-npc" style={{ borderColor: npc.color }}>
         <span style={{ background: npc.color }}>
-          <img src={npc.portrait} alt="" onError={(event) => { event.currentTarget.hidden = true; }} />
-          <span>{npc.name.slice(0, 1)}</span>
+          <NpcPortrait npc={npc} />
         </span>
         <b>{npc.name}</b>
         <small>{npc.storyTitle}</small>

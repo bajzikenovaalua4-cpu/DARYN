@@ -1,4 +1,5 @@
 import { SpritePlayer } from './SpritePlayer';
+import { NpcPortrait } from './NpcPortrait';
 import type { CharacterId } from '../lib/characters';
 import type { NovelLocation, NovelNpc } from '../lib/visualNovelData';
 
@@ -38,8 +39,7 @@ export function LocationScene({ location, characterId, playerName, completedNpcI
               onClick={() => onNpcClick(npc)}
             >
               <span className="vn-npc-avatar" style={{ background: npc.color }}>
-                <img src={npc.portrait} alt="" onError={(event) => { event.currentTarget.hidden = true; }} />
-                <span>{npc.name.slice(0, 1)}</span>
+                <NpcPortrait npc={npc} />
               </span>
               <b>{npc.name}</b>
               {done && <em>✓</em>}

@@ -11,8 +11,9 @@ export function AnalyzePage() {
   const [, navigate] = useLocation();
   const [text, setText] = useState(readExampleFromUrl);
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const question = text.trim();
 
@@ -21,9 +22,16 @@ export function AnalyzePage() {
       return;
     }
 
-    const result = analyzeSituation(question);
-    saveAnalysis(result);
-    navigate(`/result/${result.id}`);
+    setIsLoading(true);
+    setError('');
+
+    try {
+      const result = await analyzeSituation(question);
+      saveAnalysis(result);
+      navigate(`/result/${result.id}`);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -43,7 +51,9 @@ export function AnalyzePage() {
             placeholder="Например: купил телефон, он перестал работать через неделю, а продавец отказывается возвращать деньги..."
           />
           {error && <p className="error-text">{error}</p>}
-          <button type="submit">Проанализировать</button>
+          <button type="submit" disabled={isLoading}>
+            {isLoading ? 'Анализируем...' : 'Проанализировать'}
+          </button>
         </form>
       </section>
 

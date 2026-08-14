@@ -1,4 +1,5 @@
 import type { CharacterId } from './characters';
+import { npcLegalCases } from './legalCaseData';
 
 export type PlayerGender = 'male' | 'female';
 export type LocationId = 'school' | 'work' | 'city';
@@ -26,6 +27,31 @@ export type DialogueLine = {
   choices?: NovelChoice[];
 };
 
+export type CaseAction = {
+  id: string;
+  text: string;
+  correct: boolean;
+  explanation: string;
+  consequence: string;
+};
+
+export type CaseEvidence = {
+  id: string;
+  title: string;
+  description: string;
+  required: boolean;
+};
+
+export type LegalCase = {
+  question: string;
+  actionPoints: number;
+  evidencePoints: number;
+  actions: CaseAction[];
+  evidence: CaseEvidence[];
+  evidenceResult: string;
+  law: string;
+};
+
 export type NovelNpc = {
   id: string;
   name: string;
@@ -38,6 +64,7 @@ export type NovelNpc = {
   position: { left: number; top: number };
   storyTitle: string;
   dialogue: DialogueLine[];
+  legalCase?: LegalCase;
 };
 
 export type NovelLocation = {
@@ -74,6 +101,75 @@ export const novelLocations: NovelLocation[] = [
         color: '#22c55e',
         position: { left: 24, top: 45 },
         storyTitle: 'Задержанная оплата',
+        legalCase: {
+          question: 'Что вы будете делать?',
+          actionPoints: 5,
+          evidencePoints: 5,
+          actions: [
+            {
+              id: 'ask-written',
+              text: 'Попросить работодателя письменно объяснить причину задержки и срок выплаты.',
+              correct: true,
+              explanation: 'Это правильный первый шаг: сначала нужно спокойно зафиксировать нарушение и получить позицию работодателя в письменном виде.',
+              consequence: 'Так у Артёма появится понятная основа для дальнейшего обращения, если зарплату всё равно не выплатят.',
+            },
+            {
+              id: 'post-online',
+              text: 'Написать публичный пост с названием компании и суммой долга.',
+              correct: false,
+              explanation: 'Публичная жалоба может быть полезной позже, но как первый шаг она рискованна: легко перейти к обвинениям без оформленных доказательств.',
+              consequence: 'Работодатель может начать спорить не о зарплате, а о репутации и формулировках поста.',
+            },
+            {
+              id: 'quit-now',
+              text: 'Перестать выходить на смены, пока не выплатят деньги.',
+              correct: false,
+              explanation: 'Это выглядит справедливо, но без письменной фиксации можно получить новый конфликт из-за прогулов или невыполненной смены.',
+              consequence: 'Артём рискует усложнить свою позицию и потерять часть доказательств.',
+            },
+            {
+              id: 'ask-friends',
+              text: 'Спросить у друзей, были ли у них похожие задержки оплаты.',
+              correct: false,
+              explanation: 'Свидетели могут пригодиться, но сначала важнее зафиксировать именно свою работу, сумму и задержку.',
+              consequence: 'Если начать только с разговоров, работодатель может быстро удалить переписку или изменить объяснения.',
+            },
+          ],
+          evidence: [
+            {
+              id: 'work-chat',
+              title: 'Переписка о сменах',
+              description: 'Сообщения, где Артёма ставили в график и подтверждали часы работы.',
+              required: true,
+            },
+            {
+              id: 'payment-promise',
+              title: 'Сообщение о сумме оплаты',
+              description: 'Переписка с обещанной ставкой и датой выплаты.',
+              required: true,
+            },
+            {
+              id: 'bank-statement',
+              title: 'Банковская выписка',
+              description: 'Показывает, что деньги за спорный период не поступили.',
+              required: true,
+            },
+            {
+              id: 'selfie',
+              title: 'Фото в форме',
+              description: 'Подтверждает, что Артём был на месте, но само по себе не доказывает часы и долг.',
+              required: false,
+            },
+            {
+              id: 'old-ad',
+              title: 'Старое объявление о вакансии',
+              description: 'Может дать контекст, но не подтверждает фактические смены Артёма.',
+              required: false,
+            },
+          ],
+          evidenceResult: 'Для такого спора важны доказательства работы, обещанной оплаты и факта невыплаты. Фото или старое объявление могут помочь как фон, но главными доказательствами они не являются.',
+          law: `Трудовые права защищаются письменными обращениями и доказательствами: графиком, перепиской, договором, расчётом и выпиской. ${commonLawNote}`,
+        },
         dialogue: [
           { id: 'a1', speaker: 'Артём', emotion: 'worried', text: 'Мне нужна помощь. Я подрабатывал после уроков, а оплату задерживают уже второй месяц.' },
           { id: 'a2', speaker: 'Артём', emotion: 'neutral', text: 'Что лучше сделать в первую очередь?', choices: [
@@ -90,10 +186,11 @@ export const novelLocations: NovelLocation[] = [
         gender: 'Женский',
         role: 'Староста',
         relationship: 'Подруга',
-        portrait: '/assets/characters/dana.png',
-        color: '#38bdf8',
+        portrait: '/assets/characters/dana.webp',
+        color: '#ffffff',
         position: { left: 55, top: 36 },
         storyTitle: 'Телефон в рюкзаке',
+        legalCase: npcLegalCases.dana,
         dialogue: [
           { id: 'd1', speaker: 'Дана', emotion: 'worried', text: 'Учитель хочет проверить все рюкзаки из-за пропавшего телефона. Все растерялись.' },
           { id: 'd2', speaker: 'Дана', emotion: 'neutral', text: 'Как поступить правильно?', choices: [
@@ -114,6 +211,7 @@ export const novelLocations: NovelLocation[] = [
         color: '#f59e0b',
         position: { left: 76, top: 52 },
         storyTitle: 'Буллинг в чате',
+        legalCase: npcLegalCases.marat,
         dialogue: [
           { id: 'm1', speaker: 'Марат', emotion: 'worried', text: 'В общем чате выкладывают обидные мемы про одноклассника. Он перестал приходить на занятия.' },
           { id: 'm2', speaker: 'Марат', emotion: 'neutral', text: 'Что будет самым правильным?', choices: [
@@ -145,6 +243,7 @@ export const novelLocations: NovelLocation[] = [
         color: '#ec4899',
         position: { left: 25, top: 48 },
         storyTitle: 'Испытательный срок',
+        legalCase: npcLegalCases.aigerim,
         dialogue: [
           { id: 'w1', speaker: 'Айгерим', emotion: 'worried', text: 'Мне сказали, что на испытательном сроке можно не платить премию и задерживать расчёт.' },
           { id: 'w2', speaker: 'Айгерим', emotion: 'neutral', text: 'Что мне проверить?', choices: [
@@ -165,6 +264,7 @@ export const novelLocations: NovelLocation[] = [
         color: '#6366f1',
         position: { left: 54, top: 34 },
         storyTitle: 'Сверхурочные',
+        legalCase: npcLegalCases.bolat,
         dialogue: [
           { id: 'b1', speaker: 'Болат', emotion: 'strict', text: 'Команда остаётся после смены. Я хочу понять, как оформить это правильно.' },
           { id: 'b2', speaker: 'Болат', emotion: 'neutral', text: 'Какой вариант законнее?', choices: [
@@ -185,6 +285,7 @@ export const novelLocations: NovelLocation[] = [
         color: '#14b8a6',
         position: { left: 75, top: 50 },
         storyTitle: 'Штраф из зарплаты',
+        legalCase: npcLegalCases.serik,
         dialogue: [
           { id: 's1', speaker: 'Серик', emotion: 'worried', text: 'Мне хотят удержать из зарплаты стоимость повреждённого товара. Я не видел расчётов.' },
           { id: 's2', speaker: 'Серик', emotion: 'neutral', text: 'Какой первый шаг?', choices: [
@@ -216,6 +317,7 @@ export const novelLocations: NovelLocation[] = [
         color: '#2563eb',
         position: { left: 22, top: 46 },
         storyTitle: 'Проверка документов',
+        legalCase: npcLegalCases.ruslan,
         dialogue: [
           { id: 'r1', speaker: 'Руслан', emotion: 'strict', text: 'Я остановил прохожего для проверки. Он нервничает и не знает, что спросить.' },
           { id: 'r2', speaker: 'Руслан', emotion: 'neutral', text: 'Как вести себя корректно?', choices: [
@@ -236,6 +338,7 @@ export const novelLocations: NovelLocation[] = [
         color: '#db2777',
         position: { left: 54, top: 38 },
         storyTitle: 'Возврат товара',
+        legalCase: npcLegalCases.madina,
         dialogue: [
           { id: 'c1', speaker: 'Мадина', emotion: 'worried', text: 'Покупатель хочет вернуть товар с браком, но потерял коробку.' },
           { id: 'c2', speaker: 'Мадина', emotion: 'neutral', text: 'Что важно проверить?', choices: [
@@ -256,6 +359,7 @@ export const novelLocations: NovelLocation[] = [
         color: '#84cc16',
         position: { left: 78, top: 50 },
         storyTitle: 'ДТП во дворе',
+        legalCase: npcLegalCases.oleg,
         dialogue: [
           { id: 'o1', speaker: 'Олег', emotion: 'worried', text: 'Во дворе слегка задели припаркованную машину. Водитель хочет уехать, потому что спешит.' },
           { id: 'o2', speaker: 'Олег', emotion: 'neutral', text: 'Что безопаснее юридически?', choices: [

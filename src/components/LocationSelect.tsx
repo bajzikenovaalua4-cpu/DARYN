@@ -6,10 +6,11 @@ type LocationSelectProps = {
   secretUnlocked: boolean;
   onSelect: (locationId: LocationId) => void;
   onSecret: () => void;
+  onShop: () => void;
   onBack: () => void;
 };
 
-export function LocationSelect({ locations, completedNpcIds, secretUnlocked, onSelect, onSecret, onBack }: LocationSelectProps) {
+export function LocationSelect({ locations, completedNpcIds, secretUnlocked, onSelect, onSecret, onShop, onBack }: LocationSelectProps) {
   const completedLocations = locations.filter((location) => (
     location.npcs.every((npc) => completedNpcIds.includes(npc.id))
   )).length;
@@ -34,6 +35,9 @@ export function LocationSelect({ locations, completedNpcIds, secretUnlocked, onS
       </div>
       <button className={secretUnlocked ? 'vn-secret is-open' : 'vn-secret'} onClick={onSecret} disabled={!secretUnlocked}>
         {secretUnlocked ? 'Открыть секретную сцену' : 'Секретная сцена закрыта'}
+      </button>
+      <button className="vn-secret is-open" onClick={onShop}>
+        Магазин юридической грамотности
       </button>
     </section>
   );
