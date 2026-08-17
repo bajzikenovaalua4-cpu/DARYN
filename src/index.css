@@ -3477,7 +3477,7 @@ time { color: var(--muted); font-size: 14px; }
 }
 
 .vn-stage .vn-npc {
-  width: clamp(560px, 60vw, 920px);
+  width: clamp(360px, 40vw, 620px);
   min-height: 0;
   padding: 0;
   border: 0 !important;
@@ -3490,23 +3490,23 @@ time { color: var(--muted); font-size: 14px; }
 }
 
 .vn-stage .vn-npc:nth-of-type(1) {
-  left: 18% !important;
+  left: 24% !important;
   top: auto !important;
-  bottom: -34%;
+  bottom: -14%;
   z-index: 5;
 }
 
 .vn-stage .vn-npc:nth-of-type(2) {
   left: 50% !important;
   top: auto !important;
-  bottom: -30%;
+  bottom: -10%;
   z-index: 7;
 }
 
 .vn-stage .vn-npc:nth-of-type(3) {
-  left: 82% !important;
+  left: 76% !important;
   top: auto !important;
-  bottom: -34%;
+  bottom: -14%;
   z-index: 6;
 }
 
@@ -3517,8 +3517,8 @@ time { color: var(--muted); font-size: 14px; }
 }
 
 .vn-stage .vn-npc-avatar {
-  width: clamp(570px, 61vw, 940px);
-  height: clamp(960px, 142vh, 1360px);
+  width: clamp(370px, 41vw, 640px);
+  height: clamp(620px, 88vh, 900px);
   border: 0;
   border-radius: 0;
   background: transparent !important;
@@ -3574,27 +3574,27 @@ time { color: var(--muted); font-size: 14px; }
   }
 
   .vn-stage .vn-npc {
-    width: clamp(340px, 72vw, 560px);
+    width: clamp(230px, 50vw, 390px);
   }
 
   .vn-stage .vn-npc-avatar {
-    width: clamp(350px, 74vw, 580px);
-    height: clamp(650px, 110vh, 940px);
+    width: clamp(240px, 52vw, 410px);
+    height: clamp(430px, 72vh, 650px);
   }
 
   .vn-stage .vn-npc:nth-of-type(1) {
-    left: 10% !important;
-    bottom: -34%;
+    left: 18% !important;
+    bottom: -14%;
   }
 
   .vn-stage .vn-npc:nth-of-type(2) {
     left: 50% !important;
-    bottom: -30%;
+    bottom: -10%;
   }
 
   .vn-stage .vn-npc:nth-of-type(3) {
-    left: 90% !important;
-    bottom: -34%;
+    left: 82% !important;
+    bottom: -14%;
   }
 }
 
