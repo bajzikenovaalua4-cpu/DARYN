@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { t, type Language } from '../lib/i18n';
 import { interfaceThemes, type InterfaceThemeId } from '../lib/interfaceThemes';
 
 type ThemeSettingsProps = {
@@ -8,6 +9,8 @@ type ThemeSettingsProps = {
   onLockedThemeClick?: () => void;
   darkMode: boolean;
   onDarkModeChange: (enabled: boolean) => void;
+  language: Language;
+  onLanguageChange: (language: Language) => void;
 };
 
 export function ThemeSettings({
@@ -17,29 +20,37 @@ export function ThemeSettings({
   onLockedThemeClick,
   darkMode,
   onDarkModeChange,
+  language,
+  onLanguageChange,
 }: ThemeSettingsProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className={isOpen ? 'vn-theme-settings is-open' : 'vn-theme-settings'} aria-label="Настройки темы интерфейса">
+    <div className={isOpen ? 'vn-theme-settings is-open' : 'vn-theme-settings'} aria-label="Interface settings">
       <button
         className="vn-theme-toggle"
         type="button"
         onClick={() => setIsOpen((current) => !current)}
         aria-expanded={isOpen}
       >
-        Тема
+        {language.toUpperCase()}
       </button>
       <div className="vn-theme-panel" aria-hidden={!isOpen}>
         <header>
-          <span>Цвет интерфейса</span>
-          <button type="button" onClick={() => setIsOpen(false)}>Свернуть</button>
+          <span>{t(language, 'language')} / {t(language, 'theme')}</span>
+          <button type="button" onClick={() => setIsOpen(false)}>{t(language, 'back')}</button>
         </header>
+
+        <div className="vn-language-switch">
+          <span>{t(language, 'language')}</span>
+          <button type="button" className={language === 'ru' ? 'is-active' : ''} onClick={() => onLanguageChange('ru')}>RU</button>
+          <button type="button" className={language === 'kk' ? 'is-active' : ''} onClick={() => onLanguageChange('kk')}>KZ</button>
+        </div>
 
         <label className="vn-dark-mode">
           <span>
-            <b>Темная тема</b>
-            <small>Цвет интерфейса не меняется</small>
+            <b>{t(language, 'darkTheme')}</b>
+            <small>{t(language, 'darkThemeHint')}</small>
           </span>
           <input
             type="checkbox"
@@ -65,11 +76,11 @@ export function ThemeSettings({
                   }
                   onChange(theme.id);
                 }}
-                title={locked ? 'Открыть магазин' : theme.title}
-                aria-label={`Выбрать тему ${theme.title}`}
+                title={locked ? t(language, 'shop') : theme.title}
+                aria-label={theme.title}
               >
                 <i style={{ background: `linear-gradient(135deg, ${theme.colors[0]}, ${theme.colors[1]})` }} />
-                <b>{locked ? `${theme.title} shop` : theme.title}</b>
+                <b>{locked ? `${theme.title} ${t(language, 'shop')}` : theme.title}</b>
               </button>
             );
           })}

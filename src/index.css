@@ -385,6 +385,41 @@ time { color: var(--muted); font-size: 14px; }
   font-weight: 800;
 }
 
+:root {
+  --game-font: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --game-radius-sm: 8px;
+  --game-radius: 12px;
+  --game-radius-lg: 16px;
+  --game-border: 1px solid rgba(226, 232, 240, 0.18);
+  --game-border-strong: 2px solid color-mix(in srgb, var(--vn-accent-2, #38bdf8) 42%, rgba(255, 255, 255, 0.28));
+  --game-panel: rgba(15, 23, 42, 0.88);
+  --game-panel-soft: rgba(15, 23, 42, 0.74);
+  --game-panel-raised: rgba(15, 23, 42, 0.94);
+  --game-text: #f8fafc;
+  --game-muted: #cbd5e1;
+  --game-subtle: #94a3b8;
+  --game-shadow: 0 24px 70px rgba(2, 6, 23, 0.42);
+  --game-shadow-soft: 0 14px 34px rgba(2, 6, 23, 0.26);
+  --game-press-shadow: 0 7px 0 color-mix(in srgb, var(--vn-accent-dark, #1e40af) 62%, rgba(2, 6, 23, 0.5));
+  --game-grid:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px) 0 0 / 18px 18px,
+    linear-gradient(0deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px) 0 0 / 18px 18px;
+}
+
+.vn-confirm .guest-note {
+  max-width: 760px;
+  margin: 2px 0 0;
+  padding: 14px 16px;
+  border: 1px solid rgba(125, 211, 252, 0.42);
+  border-radius: 8px;
+  background:
+    linear-gradient(90deg, rgba(125, 211, 252, 0.08) 1px, transparent 1px) 0 0 / 16px 16px,
+    rgba(15, 23, 42, 0.84);
+  color: #e0f2fe;
+  box-shadow: 0 14px 34px rgba(2, 6, 23, 0.24);
+  backdrop-filter: blur(10px);
+}
+
 @media (max-width: 820px) {
   .page, .narrow-page { width: min(100% - 24px, 720px); padding-top: 18px; }
   .hero { grid-template-columns: 1fr; min-height: auto; }
@@ -1285,6 +1320,38 @@ time { color: var(--muted); font-size: 14px; }
   box-shadow: 0 4px 10px rgba(15, 23, 42, 0.18);
 }
 
+.vn-theme-panel .vn-language-switch {
+  display: flex;
+  grid-template-columns: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px;
+  border: 2px solid color-mix(in srgb, var(--vn-accent-2) 28%, #ffffff);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.vn-language-switch span {
+  color: #172033;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.vn-theme-panel .vn-language-switch button {
+  min-height: 32px;
+  min-width: 48px;
+  padding: 0 10px;
+}
+
+.mode-dark .vn-theme-panel .vn-language-switch {
+  background: rgba(15, 23, 42, 0.82);
+}
+
+.mode-dark .vn-language-switch span {
+  color: #f8fafc;
+}
+
 .legal-score {
   position: fixed;
   top: 76px;
@@ -1646,6 +1713,47 @@ time { color: var(--muted); font-size: 14px; }
   display: grid;
   justify-items: start;
   gap: 14px;
+}
+
+.vn-onboarding {
+  display: grid;
+  gap: 14px;
+  max-width: 620px;
+}
+
+.vn-onboarding h1 {
+  font-size: clamp(34px, 6vw, 58px);
+}
+
+.vn-onboarding p {
+  max-width: 520px;
+}
+
+.vn-button-hint {
+  max-width: 520px;
+  margin: -2px 0 0;
+  padding: 10px 12px;
+  border: 1px solid color-mix(in srgb, var(--vn-accent-2) 28%, #cbd5e1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.7);
+  color: #475569;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.vn-confirm .vn-button-hint {
+  max-width: 650px;
+  margin: 0;
+  padding: 14px 16px;
+  border: 1px solid rgba(147, 197, 253, 0.45);
+  border-radius: 8px;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px) 0 0 / 16px 16px,
+    rgba(15, 23, 42, 0.78);
+  color: #f8fafc;
+  line-height: 1.45;
+  box-shadow: 0 12px 28px rgba(2, 6, 23, 0.22);
+  backdrop-filter: blur(10px);
 }
 
 .vn-confirm-image {
@@ -2039,6 +2147,123 @@ time { color: var(--muted); font-size: 14px; }
   line-height: 1.35;
 }
 
+.vn-evidence-review,
+.vn-sequence-picked,
+.vn-sequence-review {
+  display: grid;
+  gap: 10px;
+  margin: 14px 0;
+}
+
+.vn-evidence-review article,
+.vn-sequence-picked span,
+.vn-sequence-picked small,
+.vn-sequence-review article {
+  padding: 12px 14px;
+  border: 2px solid color-mix(in srgb, var(--vn-accent-2) 30%, #cbd5e1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.78);
+  color: #172033;
+}
+
+.vn-evidence-review article,
+.vn-sequence-review article {
+  display: grid;
+  gap: 4px;
+}
+
+.vn-evidence-review article.is-correct,
+.vn-sequence-review article.is-correct {
+  border-color: #22c55e;
+  background: #dcfce7;
+}
+
+.vn-evidence-review article.is-wrong,
+.vn-sequence-review article.is-wrong {
+  border-color: #ef4444;
+  background: #fee2e2;
+}
+
+.vn-evidence-review small,
+.vn-sequence-review small {
+  color: #475569;
+  line-height: 1.4;
+}
+
+.mode-dark .vn-evidence-review article,
+.mode-dark .vn-sequence-picked span,
+.mode-dark .vn-sequence-picked small,
+.mode-dark .vn-sequence-review article {
+  background: rgba(15, 23, 42, 0.92);
+  color: #f8fafc;
+}
+
+.mode-dark .vn-evidence-review article.is-correct,
+.mode-dark .vn-sequence-review article.is-correct {
+  background: rgba(20, 83, 45, 0.7);
+}
+
+.mode-dark .vn-evidence-review article.is-wrong,
+.mode-dark .vn-sequence-review article.is-wrong {
+  background: rgba(127, 29, 29, 0.7);
+}
+
+.mode-dark .vn-evidence-review small,
+.mode-dark .vn-sequence-review small {
+  color: #cbd5e1;
+}
+
+.vn-case-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  margin: 14px 0;
+}
+
+.vn-case-summary span {
+  padding: 12px 14px;
+  border: 2px solid color-mix(in srgb, var(--vn-accent-2) 30%, #cbd5e1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.82);
+  color: #172033;
+  font-weight: 800;
+}
+
+.vn-case-details {
+  display: grid;
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.vn-case-details section {
+  padding: 14px 16px;
+  border: 2px solid color-mix(in srgb, var(--vn-accent-2) 28%, #cbd5e1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.76);
+}
+
+.vn-case-details strong {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.vn-case-details p {
+  margin: 0;
+}
+
+.vn-case-list {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding-left: 20px;
+}
+
+.mode-dark .vn-case-summary span,
+.mode-dark .vn-case-details section {
+  background: rgba(15, 23, 42, 0.9);
+  color: #f8fafc;
+}
+
 .vn-shop {
   display: grid;
   gap: 18px;
@@ -2138,16 +2363,86 @@ time { color: var(--muted); font-size: 14px; }
 .vn-secret-scene {
   display: grid;
   place-items: center;
-  background: linear-gradient(135deg, #1e1b4b, #0f766e 56%, #f59e0b);
+  padding: clamp(18px, 4vw, 42px);
+  background:
+    linear-gradient(135deg, rgba(30, 27, 75, 0.92), rgba(15, 118, 110, 0.78) 56%, rgba(245, 158, 11, 0.72)),
+    linear-gradient(135deg, #1e1b4b, #0f766e 56%, #f59e0b);
 }
 
-.vn-reward .vn-panel,
-.vn-secret-scene .vn-panel {
-  text-align: center;
-  border-color: #fde68a;
+.vn-reward {
+  display: grid;
+  place-items: center;
+  padding: clamp(18px, 4vw, 42px);
+}
+
+.vn-reward::before,
+.vn-secret-scene::before {
+  content: '';
+  position: absolute;
+  inset: 0;
   background:
-    radial-gradient(circle at 50% 0%, rgba(254, 240, 138, 0.55), transparent 42%),
-    linear-gradient(180deg, #ffffff, #fffbeb);
+    radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.08), transparent 30%),
+    linear-gradient(180deg, rgba(2, 6, 23, 0.35), rgba(2, 6, 23, 0.72));
+  pointer-events: none;
+}
+
+.vn-reward .vn-reward-card,
+.vn-secret-scene .vn-panel {
+  width: min(50vw, 560px);
+  min-width: 420px;
+  padding: 26px;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px) 0 0 / 18px 18px,
+    rgba(15, 23, 42, 0.88);
+  box-shadow: 0 24px 70px rgba(2, 6, 23, 0.48), inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(14px);
+  color: #f8fafc;
+  z-index: 1;
+}
+
+.vn-reward .vn-reward-card::after,
+.vn-secret-scene .vn-panel::after {
+  display: none;
+}
+
+.vn-reward .vn-kicker,
+.vn-secret-scene .vn-kicker {
+  color: #facc15;
+  letter-spacing: 0.08em;
+}
+
+.vn-reward .vn-reward-card h1,
+.vn-secret-scene .vn-panel h1 {
+  margin: 8px 0 10px;
+  color: #ffffff;
+  font-size: clamp(25px, 3vw, 36px);
+  line-height: 1.1;
+  text-shadow: none;
+}
+
+.vn-reward .vn-reward-card p,
+.vn-secret-scene .vn-panel p {
+  margin: 0;
+  color: #e2e8f0;
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+.vn-reward-stats {
+  display: grid;
+  gap: 8px;
+  margin: 18px 0;
+}
+
+.vn-reward-stats span {
+  padding: 10px 12px;
+  border: 1px solid rgba(250, 204, 21, 0.24);
+  border-radius: 8px;
+  background: rgba(250, 204, 21, 0.1);
+  color: #ffffff;
+  font-weight: 900;
 }
 
 .vn-location-select {
@@ -2493,6 +2788,22 @@ time { color: var(--muted); font-size: 14px; }
 @media (max-width: 900px) {
   .vn-shell { padding: 14px; }
   .vn-panel { padding: 22px; }
+  .vn-onboarding {
+    max-width: 100%;
+  }
+  .vn-button-hint {
+    font-size: 14px;
+  }
+  .vn-confirm .guest-note,
+  .vn-confirm .vn-button-hint {
+    max-width: 100%;
+  }
+  .vn-reward .vn-reward-card,
+  .vn-secret-scene .vn-panel {
+    width: min(100%, 440px);
+    min-width: 0;
+    padding: 20px;
+  }
   .vn-character-grid,
   .vn-location-grid { grid-template-columns: 1fr; }
   .constitution-book {
@@ -2598,5 +2909,835 @@ time { color: var(--muted); font-size: 14px; }
   .vn-location-select .vn-location-card strong {
     margin: 8px 16px 16px;
   }
+}
+
+/* Unified game design system */
+.vn-shell {
+  font-family: var(--game-font);
+  color: var(--game-text);
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px) 0 0 / 32px 32px,
+    linear-gradient(0deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px) 0 0 / 32px 32px,
+    radial-gradient(circle at 12% 16%, color-mix(in srgb, var(--vn-accent-2) 28%, transparent), transparent 30%),
+    radial-gradient(circle at 86% 18%, color-mix(in srgb, var(--vn-accent) 24%, transparent), transparent 32%),
+    linear-gradient(135deg, #07111f 0%, #101827 48%, #172033 100%);
+}
+
+.vn-panel,
+.vn-dialogue-box,
+.vn-dialogue-npc,
+.vn-scene-top div,
+.vn-theme-panel,
+.constitution-panel,
+.vn-secret,
+.shop-card,
+.vn-character-card,
+.vn-location-card,
+.vn-evidence,
+.vn-evidence-review article,
+.vn-sequence-picked span,
+.vn-sequence-picked small,
+.vn-sequence-review article,
+.vn-case-summary span,
+.vn-case-details section {
+  border: var(--game-border-strong);
+  border-radius: var(--game-radius);
+  background:
+    var(--game-grid),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.018)),
+    var(--game-panel);
+  color: var(--game-text);
+  box-shadow: var(--game-shadow-soft), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(14px);
+}
+
+.vn-panel {
+  padding: clamp(22px, 3vw, 34px);
+  overflow: hidden;
+  animation: vn-fade-in 0.26s ease both;
+}
+
+.vn-panel::after,
+.vn-location-select::after {
+  display: none;
+}
+
+.vn-panel h1,
+.vn-dialogue-box h2,
+.constitution-panel h2 {
+  color: #ffffff;
+  letter-spacing: 0;
+  text-shadow: none;
+}
+
+.vn-panel h1 {
+  margin: 8px 0 12px;
+  font-size: clamp(30px, 4.6vw, 56px);
+  line-height: 1;
+}
+
+.vn-dialogue-box h2,
+.constitution-panel h2,
+.shop-section h2 {
+  font-size: clamp(22px, 2.8vw, 34px);
+  line-height: 1.12;
+}
+
+.vn-panel p,
+.vn-dialogue-box p,
+.vn-shop > p,
+.shop-card p,
+.shop-card small,
+.constitution-panel header p,
+.constitution-layout section,
+.constitution-layout nav small,
+.constitution-layout section small,
+.vn-location-card p,
+.vn-evidence small,
+.vn-evidence-review small,
+.vn-sequence-review small {
+  color: var(--game-muted);
+}
+
+.vn-kicker,
+.vn-speaker,
+.shop-card > span,
+.constitution-panel header > span,
+.constitution-panel section > span {
+  color: color-mix(in srgb, var(--vn-accent-2) 88%, #ffffff);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.vn-primary,
+.vn-secondary,
+.vn-choice-list button,
+.constitution-toggle,
+.constitution-panel header button,
+.constitution-layout nav button,
+.vn-theme-toggle,
+.vn-theme-panel button,
+.vn-secret,
+.shop-card button {
+  min-height: 44px;
+  border-radius: var(--game-radius-sm);
+  font-weight: 900;
+  transition:
+    transform 0.16s ease,
+    box-shadow 0.16s ease,
+    border-color 0.16s ease,
+    background 0.16s ease,
+    filter 0.16s ease;
+}
+
+.vn-primary,
+.constitution-toggle,
+.vn-theme-toggle {
+  border: 0;
+  background: linear-gradient(135deg, var(--vn-accent-2), var(--vn-accent));
+  color: #ffffff;
+  box-shadow: 0 11px 0 var(--vn-accent-dark), 0 22px 38px var(--vn-accent-glow);
+}
+
+.vn-secondary,
+.vn-choice-list button,
+.constitution-panel header button,
+.constitution-layout nav button,
+.vn-theme-panel button,
+.shop-card button {
+  border: 1px solid color-mix(in srgb, var(--vn-accent-2) 34%, rgba(255, 255, 255, 0.24));
+  background: rgba(15, 23, 42, 0.7);
+  color: var(--game-text);
+  box-shadow: 0 6px 0 rgba(2, 6, 23, 0.32);
+}
+
+.vn-primary:hover,
+.vn-secondary:hover,
+.vn-choice-list button:hover,
+.constitution-toggle:hover,
+.constitution-panel header button:hover,
+.constitution-layout nav button:hover,
+.vn-theme-toggle:hover,
+.vn-theme-panel button:hover,
+.shop-card button:hover,
+.vn-secret:hover,
+.vn-location-card:hover,
+.vn-character-card:hover,
+.vn-npc:hover {
+  transform: translateY(-3px);
+  filter: saturate(1.08);
+}
+
+.vn-primary:active,
+.vn-secondary:active,
+.vn-choice-list button:active,
+.constitution-toggle:active,
+.constitution-panel header button:active,
+.constitution-layout nav button:active,
+.vn-theme-toggle:active,
+.vn-theme-panel button:active,
+.shop-card button:active,
+.vn-secret:active {
+  transform: translateY(2px);
+  box-shadow: var(--game-press-shadow);
+}
+
+.vn-primary:disabled,
+.vn-secondary:disabled,
+.vn-choice-list button:disabled,
+.shop-card button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  transform: none;
+  filter: grayscale(0.25);
+}
+
+.theme-ocean .vn-location-select {
+  --vn-accent: #2563eb;
+  --vn-accent-2: #38bdf8;
+  --vn-accent-dark: #1e40af;
+}
+
+.vn-bg-school,
+.theme-violet .vn-location-select .vn-location-card:nth-child(1) {
+  --vn-accent: #7c3aed;
+  --vn-accent-2: #a78bfa;
+  --vn-accent-dark: #5b21b6;
+}
+
+.vn-bg-work,
+.theme-sunset .vn-location-select .vn-location-card:nth-child(2) {
+  --vn-accent: #d97706;
+  --vn-accent-2: #facc15;
+  --vn-accent-dark: #92400e;
+}
+
+.vn-bg-city,
+.theme-forest .vn-location-select .vn-location-card:nth-child(3) {
+  --vn-accent: #059669;
+  --vn-accent-2: #34d399;
+  --vn-accent-dark: #065f46;
+}
+
+.vn-location-select {
+  background:
+    radial-gradient(circle at 10% 4%, rgba(56, 189, 248, 0.18), transparent 26%),
+    radial-gradient(circle at 88% 16%, rgba(59, 130, 246, 0.18), transparent 28%),
+    var(--game-grid),
+    rgba(15, 23, 42, 0.78);
+}
+
+.vn-location-select .vn-location-card {
+  grid-template-rows: 240px auto auto;
+  border-radius: var(--game-radius-lg);
+  background: rgba(15, 23, 42, 0.9);
+  box-shadow: 0 14px 0 rgba(2, 6, 23, 0.36), var(--game-shadow);
+}
+
+.vn-location-select .vn-location-card p {
+  color: #dbeafe;
+}
+
+.vn-location-select .vn-location-card strong {
+  background: rgba(15, 23, 42, 0.72);
+  color: color-mix(in srgb, var(--vn-accent-2) 72%, #ffffff);
+}
+
+.vn-location-select .vn-secret {
+  min-height: 62px;
+  padding: 14px 18px;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  border-radius: var(--game-radius);
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px) 0 0 / 18px 18px,
+    rgba(15, 23, 42, 0.62);
+  color: #cbd5e1;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.045), 0 10px 24px rgba(2, 6, 23, 0.18);
+}
+
+.vn-location-select .vn-secret:disabled {
+  border-color: rgba(125, 211, 252, 0.22);
+  background:
+    linear-gradient(90deg, rgba(125, 211, 252, 0.035) 1px, transparent 1px) 0 0 / 18px 18px,
+    rgba(15, 23, 42, 0.54);
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
+.vn-location-select .vn-secret.is-open {
+  border-color: rgba(250, 204, 21, 0.34);
+  background:
+    linear-gradient(90deg, rgba(250, 204, 21, 0.045) 1px, transparent 1px) 0 0 / 18px 18px,
+    rgba(39, 30, 16, 0.72);
+  color: #f8e7b0;
+}
+
+.vn-location-select .vn-secret.is-open:hover {
+  border-color: rgba(250, 204, 21, 0.5);
+  background:
+    linear-gradient(90deg, rgba(250, 204, 21, 0.06) 1px, transparent 1px) 0 0 / 18px 18px,
+    rgba(53, 40, 18, 0.78);
+}
+
+.vn-character-card,
+.shop-card,
+.constitution-layout nav,
+.constitution-layout section {
+  background:
+    var(--game-grid),
+    rgba(15, 23, 42, 0.82);
+}
+
+.vn-character-card.is-active,
+.shop-card.is-owned,
+.vn-evidence.is-selected,
+.constitution-layout nav button.is-active {
+  border-color: color-mix(in srgb, var(--vn-accent-2) 78%, #ffffff);
+  background:
+    var(--game-grid),
+    color-mix(in srgb, var(--vn-accent) 24%, rgba(15, 23, 42, 0.86));
+}
+
+.vn-character-image,
+.vn-npc-avatar img,
+.vn-dialogue-npc > span img {
+  object-fit: contain;
+  filter: drop-shadow(0 22px 18px rgba(2, 6, 23, 0.38));
+}
+
+.vn-character-card,
+.vn-dialogue-npc,
+.vn-player-stand,
+.vn-npc-avatar {
+  position: relative;
+}
+
+.vn-character-card::before,
+.vn-dialogue-npc::before,
+.vn-player-stand::before,
+.vn-npc-avatar::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 10px;
+  width: 58%;
+  height: 18px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: rgba(2, 6, 23, 0.34);
+  filter: blur(8px);
+  pointer-events: none;
+}
+
+.vn-dialogue-npc::before {
+  bottom: 72px;
+  width: 170px;
+}
+
+.vn-player-stand::before {
+  bottom: 26px;
+  width: 110px;
+}
+
+.vn-npc-avatar::before {
+  bottom: -6px;
+  width: 74%;
+  height: 12px;
+  z-index: -1;
+}
+
+.vn-dialogue-scene::before,
+.vn-reward::before,
+.vn-secret-scene::before {
+  background:
+    radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.08), transparent 30%),
+    linear-gradient(180deg, rgba(2, 6, 23, 0.28), rgba(2, 6, 23, 0.74));
+}
+
+.vn-dialogue-box {
+  padding: clamp(18px, 2.4vw, 28px);
+  border-radius: var(--game-radius-lg);
+}
+
+.vn-result {
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.72);
+}
+
+.vn-result.good {
+  background: rgba(22, 163, 74, 0.18);
+  color: #86efac;
+}
+
+.vn-result.bad {
+  background: rgba(239, 68, 68, 0.18);
+  color: #fecaca;
+}
+
+.vn-evidence-review article.is-correct,
+.vn-sequence-review article.is-correct {
+  border-color: rgba(134, 239, 172, 0.72);
+  background: rgba(20, 83, 45, 0.58);
+}
+
+.vn-evidence-review article.is-wrong,
+.vn-sequence-review article.is-wrong {
+  border-color: rgba(252, 165, 165, 0.74);
+  background: rgba(127, 29, 29, 0.58);
+}
+
+.vn-case-summary span,
+.vn-reward-stats span {
+  background: color-mix(in srgb, var(--vn-accent) 18%, rgba(15, 23, 42, 0.8));
+  color: var(--game-text);
+}
+
+.legal-score strong {
+  border-radius: var(--game-radius);
+  background:
+    var(--game-grid),
+    rgba(15, 23, 42, 0.9);
+  color: #ffffff;
+  box-shadow: var(--game-shadow-soft);
+}
+
+.legal-score span {
+  animation: legal-score-pop 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.constitution-panel {
+  border-radius: var(--game-radius-lg);
+  background:
+    var(--game-grid),
+    rgba(15, 23, 42, 0.92);
+}
+
+.constitution-layout nav,
+.constitution-layout section {
+  border-radius: var(--game-radius);
+}
+
+.vn-theme-panel {
+  border-radius: var(--game-radius);
+  background:
+    var(--game-grid),
+    rgba(15, 23, 42, 0.92);
+}
+
+.vn-theme-panel header > span,
+.vn-language-switch span,
+.vn-dark-mode,
+.vn-dark-mode small {
+  color: var(--game-text);
+}
+
+.vn-dark-mode,
+.vn-theme-panel .vn-language-switch {
+  background: rgba(15, 23, 42, 0.68);
+}
+
+.vn-theme-panel header > span {
+  color: #f8fafc;
+  text-shadow: 0 1px 10px rgba(125, 211, 252, 0.22);
+}
+
+.vn-theme-panel header button,
+.vn-theme-panel .vn-language-switch button,
+.vn-theme-panel > div button {
+  border-color: rgba(226, 232, 240, 0.18);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.035)),
+    rgba(15, 23, 42, 0.74);
+  color: #f8fafc;
+  text-shadow: 0 1px 8px rgba(2, 6, 23, 0.45);
+}
+
+.vn-theme-panel .vn-language-switch button.is-active,
+.vn-theme-panel > div button.is-active {
+  border-color: color-mix(in srgb, var(--vn-accent-2) 72%, #ffffff);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--vn-accent) 30%, rgba(255, 255, 255, 0.08)), rgba(15, 23, 42, 0.82)),
+    rgba(15, 23, 42, 0.88);
+  color: #ffffff;
+  box-shadow: 0 5px 0 color-mix(in srgb, var(--vn-accent-dark) 58%, rgba(2, 6, 23, 0.46));
+}
+
+.vn-theme-panel .vn-language-switch {
+  border-color: rgba(226, 232, 240, 0.2);
+}
+
+.vn-theme-panel .vn-language-switch span,
+.vn-dark-mode b {
+  color: #f8fafc;
+  text-shadow: 0 1px 8px rgba(2, 6, 23, 0.55);
+}
+
+.vn-dark-mode small {
+  color: #cbd5e1;
+}
+
+.vn-dark-mode > i {
+  width: 42px;
+  height: 24px;
+  overflow: hidden;
+  border: 1px solid rgba(226, 232, 240, 0.34);
+  background: rgba(148, 163, 184, 0.34);
+}
+
+.vn-dark-mode > i::after {
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+}
+
+.vn-dark-mode input:checked + i::after {
+  transform: translateX(18px);
+}
+
+.vn-location-select .vn-kicker {
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1px solid rgba(125, 211, 252, 0.28);
+  border-radius: 999px;
+  background:
+    linear-gradient(90deg, rgba(125, 211, 252, 0.04) 1px, transparent 1px) 0 0 / 14px 14px,
+    rgba(15, 23, 42, 0.72);
+  color: #bae6fd;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.045), 0 10px 24px rgba(2, 6, 23, 0.18);
+  letter-spacing: 0.06em;
+  text-shadow: 0 1px 8px rgba(2, 6, 23, 0.55);
+}
+
+.vn-reward .vn-reward-card,
+.vn-secret-scene .vn-panel {
+  width: min(50vw, 560px);
+  border-radius: var(--game-radius-lg);
+  background:
+    var(--game-grid),
+    rgba(15, 23, 42, 0.9);
+}
+
+.guest-note,
+.vn-button-hint {
+  border: var(--game-border);
+  border-radius: var(--game-radius);
+  background:
+    var(--game-grid),
+    rgba(15, 23, 42, 0.78);
+  color: var(--game-muted);
+  box-shadow: var(--game-shadow-soft);
+}
+
+.vn-onboarding,
+.vn-confirm,
+.vn-setup,
+.vn-shop,
+.vn-location-select {
+  animation: vn-window-in 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes vn-window-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 900px) {
+  .vn-panel,
+  .vn-dialogue-box,
+  .constitution-panel {
+    border-radius: var(--game-radius);
+  }
+
+  .vn-location-select .vn-location-card {
+    grid-template-rows: 220px auto auto;
+  }
+}
+
+/* Visual-novel NPC placement on location screens */
+.vn-scene::before {
+  display: none;
+}
+
+.vn-stage {
+  overflow: hidden;
+}
+
+.vn-stage .vn-player-stand {
+  display: none;
+}
+
+.vn-stage .vn-npc {
+  width: clamp(560px, 60vw, 920px);
+  min-height: 0;
+  padding: 0;
+  border: 0 !important;
+  border-radius: 0;
+  background: transparent !important;
+  color: #ffffff;
+  box-shadow: none !important;
+  translate: -50% 0;
+  z-index: 5;
+}
+
+.vn-stage .vn-npc:nth-of-type(1) {
+  left: 18% !important;
+  top: auto !important;
+  bottom: -34%;
+  z-index: 5;
+}
+
+.vn-stage .vn-npc:nth-of-type(2) {
+  left: 50% !important;
+  top: auto !important;
+  bottom: -30%;
+  z-index: 7;
+}
+
+.vn-stage .vn-npc:nth-of-type(3) {
+  left: 82% !important;
+  top: auto !important;
+  bottom: -34%;
+  z-index: 6;
+}
+
+.vn-stage .vn-npc:hover {
+  transform: translateY(-10px) scale(1.035);
+  filter: saturate(1.08);
+  box-shadow: none !important;
+}
+
+.vn-stage .vn-npc-avatar {
+  width: clamp(570px, 61vw, 940px);
+  height: clamp(960px, 142vh, 1360px);
+  border: 0;
+  border-radius: 0;
+  background: transparent !important;
+  box-shadow: none;
+}
+
+.vn-stage .vn-npc-avatar::before {
+  bottom: 18px;
+  width: 58%;
+  height: 24px;
+  z-index: 0;
+  background: rgba(2, 6, 23, 0.38);
+  filter: blur(12px);
+}
+
+.vn-stage .vn-npc-avatar img {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  object-fit: contain;
+  filter: drop-shadow(0 22px 22px rgba(2, 6, 23, 0.46));
+}
+
+.vn-stage .vn-npc > b {
+  display: none;
+  width: fit-content;
+  margin: -22px auto 0;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.62);
+  color: #f8fafc;
+  font-size: 14px;
+  text-shadow: 0 2px 8px rgba(2, 6, 23, 0.7);
+  backdrop-filter: blur(8px);
+}
+
+.vn-stage .vn-npc em {
+  top: 12%;
+  right: 18%;
+  color: #86efac;
+  text-shadow: 0 2px 10px rgba(2, 6, 23, 0.7);
+}
+
+.vn-stage .vn-dossier {
+  display: none !important;
+}
+
+@media (max-width: 900px) {
+  .vn-stage .vn-player-stand {
+    display: none;
+  }
+
+  .vn-stage .vn-npc {
+    width: clamp(340px, 72vw, 560px);
+  }
+
+  .vn-stage .vn-npc-avatar {
+    width: clamp(350px, 74vw, 580px);
+    height: clamp(650px, 110vh, 940px);
+  }
+
+  .vn-stage .vn-npc:nth-of-type(1) {
+    left: 10% !important;
+    bottom: -34%;
+  }
+
+  .vn-stage .vn-npc:nth-of-type(2) {
+    left: 50% !important;
+    bottom: -30%;
+  }
+
+  .vn-stage .vn-npc:nth-of-type(3) {
+    left: 90% !important;
+    bottom: -34%;
+  }
+}
+
+/* Visual-novel dialogue character presentation */
+.vn-dialogue-scene {
+  display: grid;
+  align-content: end;
+  overflow: hidden;
+}
+
+.vn-dialogue-scene::before {
+  display: none;
+}
+
+.vn-dialogue-scene .vn-showcase {
+  position: absolute;
+  inset: 0 0 130px;
+  display: block;
+  min-height: 0;
+  padding: 0;
+  pointer-events: none;
+}
+
+.vn-dialogue-scene .vn-dialogue-player {
+  display: none;
+}
+
+.vn-dialogue-scene .vn-dialogue-npc {
+  position: absolute;
+  left: 50%;
+  bottom: -18px;
+  width: min(48vw, 520px);
+  min-width: 320px;
+  min-height: 0;
+  padding: 0;
+  border: 0 !important;
+  border-radius: 0;
+  background: transparent !important;
+  box-shadow: none !important;
+  transform: translateX(-50%);
+  color: #ffffff;
+  pointer-events: none;
+}
+
+.vn-dialogue-scene .vn-dialogue-npc::before {
+  left: 50%;
+  bottom: 12px;
+  width: 58%;
+  height: 26px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: rgba(2, 6, 23, 0.42);
+  filter: blur(14px);
+}
+
+.vn-dialogue-scene .vn-dialogue-npc > span {
+  width: 100%;
+  height: min(68vh, 620px);
+  border: 0;
+  border-radius: 0;
+  background: transparent !important;
+  box-shadow: none;
+  overflow: visible;
+}
+
+.vn-dialogue-scene .vn-dialogue-npc > span img {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  object-fit: contain;
+  filter: drop-shadow(0 26px 24px rgba(2, 6, 23, 0.48));
+}
+
+.vn-dialogue-scene .vn-dialogue-npc > b,
+.vn-dialogue-scene .vn-dialogue-npc > small {
+  display: none;
+}
+
+.vn-dialogue-scene .vn-dialogue-box {
+  position: relative;
+  z-index: 5;
+  width: min(1120px, calc(100% - 48px));
+  margin: 0 auto 28px;
+  border: 1px solid rgba(125, 211, 252, 0.24);
+  border-radius: var(--game-radius-lg);
+  background:
+    linear-gradient(90deg, rgba(125, 211, 252, 0.035) 1px, transparent 1px) 0 0 / 18px 18px,
+    rgba(8, 13, 26, 0.82);
+  box-shadow: 0 22px 62px rgba(2, 6, 23, 0.44), inset 0 0 0 1px rgba(255, 255, 255, 0.055);
+  backdrop-filter: blur(14px);
+}
+
+@media (max-width: 900px) {
+  .vn-dialogue-scene .vn-showcase {
+    inset: 0 0 165px;
+  }
+
+  .vn-dialogue-scene .vn-dialogue-npc {
+    width: min(78vw, 420px);
+    min-width: 250px;
+    bottom: 28px;
+  }
+
+  .vn-dialogue-scene .vn-dialogue-npc > span {
+    height: min(58vh, 480px);
+  }
+
+  .vn-dialogue-scene .vn-dialogue-box {
+    width: min(100% - 28px, 720px);
+    margin-bottom: 18px;
+  }
+}
+
+.vn-dialogue-scene::before,
+.vn-dialogue-scene::after {
+  content: none !important;
+  display: none !important;
+  background: none !important;
+  backdrop-filter: none !important;
+  filter: none !important;
+}
+
+.vn-dialogue-scene,
+.vn-dialogue-scene .vn-showcase,
+.vn-dialogue-scene .vn-dialogue-npc,
+.vn-dialogue-scene .vn-dialogue-npc > span,
+.vn-dialogue-scene .vn-dialogue-npc > span img {
+  filter: none !important;
+  backdrop-filter: none !important;
+}
+
+.vn-dialogue-scene .vn-dialogue-npc::before,
+.vn-dialogue-scene .vn-dialogue-npc::after,
+.vn-dialogue-scene .vn-dialogue-npc > span::before,
+.vn-dialogue-scene .vn-dialogue-npc > span::after {
+  content: none !important;
+  display: none !important;
+  background: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+}
+
+.vn-dialogue-scene .vn-dialogue-box {
+  backdrop-filter: none !important;
 }
 

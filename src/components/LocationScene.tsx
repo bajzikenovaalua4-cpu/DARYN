@@ -1,9 +1,11 @@
-import { SpritePlayer } from './SpritePlayer';
 import { NpcPortrait } from './NpcPortrait';
+import { SpritePlayer } from './SpritePlayer';
 import type { CharacterId } from '../lib/characters';
+import { getLocationText, t, type Language } from '../lib/i18n';
 import type { NovelLocation, NovelNpc } from '../lib/visualNovelData';
 
 type LocationSceneProps = {
+  language: Language;
   location: NovelLocation;
   characterId: CharacterId;
   playerName: string;
@@ -12,16 +14,25 @@ type LocationSceneProps = {
   onBack: () => void;
 };
 
-export function LocationScene({ location, characterId, playerName, completedNpcIds, onNpcClick, onBack }: LocationSceneProps) {
+export function LocationScene({
+  language,
+  location,
+  characterId,
+  playerName,
+  completedNpcIds,
+  onNpcClick,
+  onBack,
+}: LocationSceneProps) {
   const completed = location.npcs.filter((npc) => completedNpcIds.includes(npc.id)).length;
+  const locationText = getLocationText(language, location);
 
   return (
     <section className={`vn-scene ${location.backgroundClass}`}>
       <header className="vn-scene-top">
-        <button className="vn-secondary" onClick={onBack}>К локациям</button>
+        <button className="vn-secondary" onClick={onBack}>{t(language, 'toLocations')}</button>
         <div>
-          <span>{location.title}</span>
-          <strong>{completed} / 3 NPC</strong>
+          <span>{locationText.title}</span>
+          <strong>{completed} / {location.npcs.length} NPC</strong>
         </div>
       </header>
       <div className="vn-stage">
@@ -31,6 +42,7 @@ export function LocationScene({ location, characterId, playerName, completedNpcI
         </div>
         {location.npcs.map((npc) => {
           const done = completedNpcIds.includes(npc.id);
+
           return (
             <button
               key={npc.id}
@@ -44,12 +56,12 @@ export function LocationScene({ location, characterId, playerName, completedNpcI
               <b>{npc.name}</b>
               {done && <em>✓</em>}
               <span className="vn-dossier">
-                <strong>Досье персонажа</strong>
-                Имя: {npc.name}<br />
-                Возраст: {npc.age}<br />
-                Пол: {npc.gender}<br />
-                Статус: {npc.role}<br />
-                Связь с героем: {npc.relationship}
+                <strong>{t(language, 'npcDossier')}</strong>
+                {t(language, 'name')}: {npc.name}<br />
+                {t(language, 'age')}: {npc.age}<br />
+                {t(language, 'gender')}: {npc.gender}<br />
+                {t(language, 'status')}: {npc.role}<br />
+                {t(language, 'relationship')}: {npc.relationship}
               </span>
             </button>
           );

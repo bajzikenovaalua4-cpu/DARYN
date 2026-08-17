@@ -27,9 +27,9 @@ export function HistoryPage() {
 
       {history.length === 0 ? (
         <section className="empty-state">
-          <h2>Пока пусто</h2>
-          <p>Создай первый разбор, и он появится здесь.</p>
-          <Link href="/analyze" className="primary-action">Разобрать ситуацию</Link>
+          <h2>Здесь пока пусто</h2>
+          <p>Пройди свою первую историю, чтобы увидеть результат.</p>
+          <Link href="/register" className="primary-action">Начать игру</Link>
         </section>
       ) : (
         <div className="history-list">

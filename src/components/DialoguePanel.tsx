@@ -3,18 +3,32 @@ import { LegalCasePanel } from './LegalCasePanel';
 import { NpcPortrait } from './NpcPortrait';
 import { SpritePlayer } from './SpritePlayer';
 import type { CharacterId } from '../lib/characters';
+import { t, type Language } from '../lib/i18n';
 import type { NovelChoice, NovelLocation, NovelNpc } from '../lib/visualNovelData';
 
 type DialoguePanelProps = {
+  language: Language;
   location: NovelLocation;
   npc: NovelNpc;
   characterId: CharacterId;
   playerName: string;
+  hintAvailable?: boolean;
+  onUseHint?: () => void;
   onComplete: (choice: NovelChoice) => void;
   onCancel: () => void;
 };
 
-export function DialoguePanel({ location, npc, characterId, playerName, onComplete, onCancel }: DialoguePanelProps) {
+export function DialoguePanel({
+  language,
+  location,
+  npc,
+  characterId,
+  playerName,
+  hintAvailable,
+  onUseHint,
+  onComplete,
+  onCancel,
+}: DialoguePanelProps) {
   const [lineIndex, setLineIndex] = useState(0);
   const [choice, setChoice] = useState<NovelChoice | null>(null);
   const line = npc.dialogue[lineIndex];
@@ -25,13 +39,13 @@ export function DialoguePanel({ location, npc, characterId, playerName, onComple
         <CharacterShowcase characterId={characterId} npc={npc} playerName={playerName} />
         <div className="vn-dialogue-box">
           <span className={choice.correct ? 'vn-result good' : 'vn-result bad'}>
-            {choice.correct ? '✓ Правильный ответ' : 'Ответ требует доработки'}
+            {choice.correct ? t(language, 'goodActions') : t(language, 'riskyActions')}
           </span>
-          <h2>{choice.correct ? `+${choice.points} юридической грамотности` : '+0 юридической грамотности'}</h2>
+          <h2>+{choice.correct ? choice.points : 0} {t(language, 'legalLiteracy')}</h2>
           <p>{choice.explanation}</p>
-          <strong>Законодательство РК</strong>
+          <strong>{t(language, 'lawKz')}</strong>
           <p>{choice.law}</p>
-          <button className="vn-primary" onClick={() => onComplete(choice)}>Завершить дело</button>
+          <button className="vn-primary" onClick={() => onComplete(choice)}>{t(language, 'finishCase')}</button>
         </div>
       </section>
     );
@@ -42,7 +56,13 @@ export function DialoguePanel({ location, npc, characterId, playerName, onComple
       <section className={`vn-dialogue-scene ${location.backgroundClass}`}>
         <CharacterShowcase characterId={characterId} npc={npc} playerName={playerName} />
         <div className="vn-dialogue-box">
-          <LegalCasePanel npc={npc} onComplete={onComplete} />
+          <LegalCasePanel
+            language={language}
+            npc={npc}
+            hintAvailable={hintAvailable}
+            onUseHint={onUseHint}
+            onComplete={onComplete}
+          />
         </div>
       </section>
     );
@@ -62,8 +82,8 @@ export function DialoguePanel({ location, npc, characterId, playerName, onComple
           </div>
         ) : (
           <div className="vn-actions">
-            <button className="vn-secondary" onClick={onCancel}>Назад</button>
-            <button className="vn-primary" onClick={() => setLineIndex((value) => value + 1)}>Продолжить</button>
+            <button className="vn-secondary" onClick={onCancel}>{t(language, 'back')}</button>
+            <button className="vn-primary" onClick={() => setLineIndex((value) => value + 1)}>{t(language, 'continue')}</button>
           </div>
         )}
       </div>

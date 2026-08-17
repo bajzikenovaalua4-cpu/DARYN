@@ -13,7 +13,9 @@ import { SecretScene } from '../components/SecretScene';
 import { ShopPanel } from '../components/ShopPanel';
 import { ThemeSettings } from '../components/ThemeSettings';
 import { characters } from '../lib/characters';
+import { languageKey, t, type Language } from '../lib/i18n';
 import { defaultInterfaceTheme, type InterfaceThemeId } from '../lib/interfaceThemes';
+import { getUsedItemId, hintItemId } from '../lib/shopData';
 import {
   emptyProgress,
   loadLocalProgress,
@@ -34,12 +36,13 @@ import {
   type PlayerProfile,
 } from '../lib/visualNovelData';
 
-type GameScreen = 'setup' | 'confirm' | 'locations' | 'scene' | 'dialogue' | 'reward' | 'secret' | 'shop';
+type GameScreen = 'setup' | 'welcome' | 'confirm' | 'locations' | 'scene' | 'dialogue' | 'reward' | 'secret' | 'shop';
 
 const guestKey = 'law-quest-guest';
 const guestUserId = 'guest';
 const themeKey = 'law-quest-interface-theme';
 const darkModeKey = 'law-quest-dark-mode';
+const onboardingKey = 'law-quest-onboarding-seen';
 const shopThemeMap = {
   'theme-aurora': 'aurora',
   'theme-gold': 'gold',
@@ -53,7 +56,11 @@ export function GamePage() {
     (window.localStorage.getItem(themeKey) as InterfaceThemeId | null) ?? defaultInterfaceTheme
   ));
   const [darkMode, setDarkMode] = useState(() => window.localStorage.getItem(darkModeKey) === 'true');
+  const [language, setLanguage] = useState<Language>(() => (
+    (window.localStorage.getItem(languageKey) as Language | null) ?? 'ru'
+  ));
   const [progress, setProgress] = useState<NovelProgress>(emptyProgress);
+  const [onboardingSeen, setOnboardingSeen] = useState(() => window.localStorage.getItem(onboardingKey) === 'true');
   const [scoreBurstKey, setScoreBurstKey] = useState(0);
   const [screen, setScreen] = useState<GameScreen>('setup');
   const [activeLocationId, setActiveLocationId] = useState<LocationId>('school');
@@ -76,6 +83,7 @@ export function GamePage() {
     () => progress.shopPurchases.map(getShopThemeId).filter((themeId): themeId is InterfaceThemeId => Boolean(themeId)),
     [progress.shopPurchases],
   );
+  const hintAvailable = progress.shopPurchases.includes(hintItemId) && !progress.shopPurchases.includes(getUsedItemId(hintItemId));
 
   useEffect(() => {
     if (!isSupabaseConfigured) return undefined;
@@ -130,6 +138,11 @@ export function GamePage() {
     window.localStorage.setItem(darkModeKey, String(enabled));
   };
 
+  const changeLanguage = (nextLanguage: Language) => {
+    setLanguage(nextLanguage);
+    window.localStorage.setItem(languageKey, nextLanguage);
+  };
+
   const themeSettings = (
     <ThemeSettings
       value={interfaceTheme}
@@ -138,6 +151,8 @@ export function GamePage() {
       onLockedThemeClick={() => setScreen('shop')}
       darkMode={darkMode}
       onDarkModeChange={changeDarkMode}
+      language={language}
+      onLanguageChange={changeLanguage}
     />
   );
 
@@ -164,13 +179,19 @@ export function GamePage() {
       );
     }
 
-    setScreen('confirm');
+    setScreen(onboardingSeen ? 'confirm' : 'welcome');
   };
 
   const resetPlayerSetup = () => {
     const nextProgress = { ...progress, profile: null };
     updateProgress(nextProgress);
     setScreen('setup');
+  };
+
+  const finishOnboarding = () => {
+    window.localStorage.setItem(onboardingKey, 'true');
+    setOnboardingSeen(true);
+    setScreen('confirm');
   };
 
   const exitToRegister = () => {
@@ -203,6 +224,24 @@ export function GamePage() {
     changeInterfaceTheme(themeId);
   };
 
+  const useHintItem = () => {
+    if (!progress.profile || !hintAvailable) return;
+    const shopPurchases = [...progress.shopPurchases, getUsedItemId(hintItemId)];
+    const nextProgress = { ...progress, shopPurchases };
+    updateProgress(nextProgress);
+
+    if (session) {
+      void saveProfileToSupabase(
+        userId,
+        progress.profile,
+        progress.legalLiteracy,
+        progress.secretUnlocked,
+        shopPurchases,
+        progress.shopSpent,
+      );
+    }
+  };
+
   const completeNpc = (choice: NovelChoice) => {
     if (!activeNpc) return;
 
@@ -222,9 +261,7 @@ export function GamePage() {
     const nextProgress = { ...progress, completed, legalLiteracy, secretUnlocked };
 
     updateProgress(nextProgress);
-    if (result.points > 0) {
-      setScoreBurstKey((value) => value + 1);
-    }
+    if (result.points > 0) setScoreBurstKey((value) => value + 1);
 
     if (session) {
       void saveNpcToSupabase(userId, result);
@@ -257,7 +294,21 @@ export function GamePage() {
     return (
       <main className={shellClassName}>
         {gameTools}
-        <CharacterSetup onComplete={completeSetup} onBack={exitToRegister} />
+        <CharacterSetup language={language} onComplete={completeSetup} onBack={exitToRegister} />
+      </main>
+    );
+  }
+
+  if (screen === 'welcome') {
+    return (
+      <main className={shellClassName}>
+        {gameTools}
+        <section className="vn-panel vn-onboarding">
+          <span className="vn-kicker">{t(language, 'welcomeLabel')}</span>
+          <h1>{t(language, 'welcomeTitle')}</h1>
+          <p>{t(language, 'welcomeText')}</p>
+          <button className="vn-primary" onClick={finishOnboarding}>{t(language, 'gotIt')}</button>
+        </section>
       </main>
     );
   }
@@ -269,16 +320,17 @@ export function GamePage() {
       <main className={shellClassName}>
         {gameTools}
         <section className="vn-panel vn-confirm">
-          <button className="vn-secondary" onClick={resetPlayerSetup}>Назад</button>
-          <span className="vn-kicker">Шаг 4</span>
-          <h1>Добро пожаловать, {progress.profile.name}.</h1>
+          <button className="vn-secondary" onClick={resetPlayerSetup}>{t(language, 'back')}</button>
+          <span className="vn-kicker">{t(language, 'step')} 4</span>
+          <h1>{t(language, 'welcomePlayer')}, {progress.profile.name}.</h1>
           <img className="vn-confirm-image" src={character.preview} alt={character.title} />
-          <p>Выбран персонаж: {character.title}.</p>
-          {isGuest && <p className="guest-note">Гостевой режим: прогресс хранится только на этом устройстве.</p>}
+          <p>{t(language, 'selectedCharacter')}: {character.title}.</p>
+          {isGuest && <p className="guest-note">{t(language, 'guestNote')}</p>}
           <div className="vn-actions">
-            <button className="vn-primary" onClick={() => setScreen('locations')}>Начать игру</button>
-            <button className="vn-secondary" onClick={resetPlayerSetup}>Сменить персонажа</button>
+            <button className="vn-primary" onClick={() => setScreen('locations')}>{t(language, 'startGame')}</button>
+            <button className="vn-secondary" onClick={resetPlayerSetup}>{t(language, 'changeCharacter')}</button>
           </div>
+          <p className="vn-button-hint">{t(language, 'startHint')}</p>
         </section>
       </main>
     );
@@ -289,10 +341,13 @@ export function GamePage() {
       <main className={shellClassName}>
         {gameTools}
         <DialoguePanel
+          language={language}
           location={activeLocation}
           npc={activeNpc}
           characterId={progress.profile.characterId}
           playerName={progress.profile.name}
+          hintAvailable={hintAvailable}
+          onUseHint={useHintItem}
           onComplete={completeNpc}
           onCancel={() => setScreen('scene')}
         />
@@ -301,10 +356,20 @@ export function GamePage() {
   }
 
   if (screen === 'reward') {
+    const locationNpcIds = activeLocation.npcs.map((npc) => npc.id);
+    const locationPoints = progress.completed
+      .filter((item) => locationNpcIds.includes(item.npcId))
+      .reduce((sum, item) => sum + item.points, 0);
+
     return (
       <main className={shellClassName}>
         {gameTools}
-        <LocationReward location={activeLocation} onContinue={() => setScreen('locations')} />
+        <LocationReward
+          language={language}
+          location={activeLocation}
+          earnedPoints={locationPoints}
+          onContinue={() => setScreen('locations')}
+        />
       </main>
     );
   }
@@ -313,7 +378,7 @@ export function GamePage() {
     return (
       <main className={shellClassName}>
         {gameTools}
-        <SecretScene legalLiteracy={progress.legalLiteracy} onBack={() => setScreen('locations')} />
+        <SecretScene language={language} legalLiteracy={progress.legalLiteracy} onBack={() => setScreen('locations')} />
       </main>
     );
   }
@@ -323,6 +388,7 @@ export function GamePage() {
       <main className={shellClassName}>
         {gameTools}
         <ShopPanel
+          language={language}
           xp={progress.legalLiteracy}
           purchasedIds={progress.shopPurchases}
           activeThemeItemId={getActiveThemeItemId(interfaceTheme)}
@@ -339,6 +405,7 @@ export function GamePage() {
       <main className={shellClassName}>
         {gameTools}
         <LocationScene
+          language={language}
           location={activeLocation}
           characterId={progress.profile.characterId}
           playerName={progress.profile.name}
@@ -357,6 +424,7 @@ export function GamePage() {
     <main className={shellClassName}>
       {gameTools}
       <LocationSelect
+        language={language}
         locations={novelLocations}
         completedNpcIds={completedNpcIds}
         secretUnlocked={progress.secretUnlocked}

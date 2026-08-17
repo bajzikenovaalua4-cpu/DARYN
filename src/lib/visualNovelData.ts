@@ -42,12 +42,20 @@ export type CaseEvidence = {
   required: boolean;
 };
 
+export type CaseSequenceStep = {
+  id: string;
+  title: string;
+  explanation: string;
+};
+
 export type LegalCase = {
   question: string;
   actionPoints: number;
   evidencePoints: number;
+  allowMultipleActions?: boolean;
   actions: CaseAction[];
   evidence: CaseEvidence[];
+  sequence?: CaseSequenceStep[];
   evidenceResult: string;
   law: string;
 };
@@ -97,14 +105,15 @@ export const novelLocations: NovelLocation[] = [
         gender: 'Мужской',
         role: 'Школьник',
         relationship: 'Одноклассник',
-        portrait: '/assets/characters/artem.png',
+        portrait: '/assets/characters/artem.webp',
         color: '#22c55e',
         position: { left: 24, top: 45 },
         storyTitle: 'Задержанная оплата',
         legalCase: {
-          question: 'Что вы будете делать?',
+          question: 'Артёму 14 лет. Он две недели помогал в кафе после уроков, договор письменно не подписывал, смены были в чате, оплату обещали 10-го числа, но задерживают уже 12 дней. Что нужно сделать сейчас?',
           actionPoints: 5,
           evidencePoints: 5,
+          allowMultipleActions: true,
           actions: [
             {
               id: 'ask-written',
@@ -112,6 +121,20 @@ export const novelLocations: NovelLocation[] = [
               correct: true,
               explanation: 'Это правильный первый шаг: сначала нужно спокойно зафиксировать нарушение и получить позицию работодателя в письменном виде.',
               consequence: 'Так у Артёма появится понятная основа для дальнейшего обращения, если зарплату всё равно не выплатят.',
+            },
+            {
+              id: 'save-work-terms',
+              text: 'Сохранить переписку о сменах, ставке оплаты, датах работы и обещанном сроке выплаты.',
+              correct: true,
+              explanation: 'Это важно, потому что договора нет: условия работы и сам факт смен придётся подтверждать перепиской и другими материалами.',
+              consequence: 'Если работодатель удалит сообщения или начнёт отрицать смены, у Артёма останется зафиксированная версия событий.',
+            },
+            {
+              id: 'ask-adult-help',
+              text: 'Попросить родителя или другого законного представителя помочь с письменным обращением.',
+              correct: true,
+              explanation: 'Возраст важен: Артём несовершеннолетний, поэтому участие взрослого делает обращение спокойнее и юридически сильнее.',
+              consequence: 'Взрослый сможет помочь оформить обращение без угроз и ошибок, особенно если придётся идти дальше.',
             },
             {
               id: 'post-online',
@@ -134,6 +157,13 @@ export const novelLocations: NovelLocation[] = [
               explanation: 'Свидетели могут пригодиться, но сначала важнее зафиксировать именно свою работу, сумму и задержку.',
               consequence: 'Если начать только с разговоров, работодатель может быстро удалить переписку или изменить объяснения.',
             },
+            {
+              id: 'take-cash-no-paper',
+              text: 'Согласиться на частичную выплату наличными без расписки, чтобы быстрее получить хоть что-то.',
+              correct: false,
+              explanation: 'Это звучит практично, но без фиксации суммы и остатка долга потом сложнее доказать, что выплата была неполной.',
+              consequence: 'Работодатель может заявить, что полностью рассчитался, а Артёму будет труднее подтвердить оставшуюся задолженность.',
+            },
           ],
           evidence: [
             {
@@ -151,23 +181,40 @@ export const novelLocations: NovelLocation[] = [
             {
               id: 'bank-statement',
               title: 'Банковская выписка',
-              description: 'Показывает, что деньги за спорный период не поступили.',
-              required: true,
+              description: 'Полезна позже, но сначала важнее подтвердить работу и обещанные условия.',
+              required: false,
             },
             {
               id: 'selfie',
               title: 'Фото в форме',
               description: 'Подтверждает, что Артём был на месте, но само по себе не доказывает часы и долг.',
-              required: false,
+              required: true,
             },
             {
               id: 'old-ad',
               title: 'Старое объявление о вакансии',
-              description: 'Может дать контекст, но не подтверждает фактические смены Артёма.',
-              required: false,
+              description: 'Подтверждает обещанную ставку и условия, если договора ещё нет.',
+              required: true,
             },
           ],
-          evidenceResult: 'Для такого спора важны доказательства работы, обещанной оплаты и факта невыплаты. Фото или старое объявление могут помочь как фон, но главными доказательствами они не являются.',
+          sequence: [
+            {
+              id: 'collect-proof',
+              title: 'Собрать переписку, график и данные по сменам',
+              explanation: 'Без доказательств трудно подтвердить сам факт работы и размер долга.',
+            },
+            {
+              id: 'written-request',
+              title: 'Письменно запросить срок и причину задержки',
+              explanation: 'После сбора материалов нужно зафиксировать позицию работодателя.',
+            },
+            {
+              id: 'labor-complaint',
+              title: 'Обратиться в трудовую инспекцию или за помощью к взрослым',
+              explanation: 'Если выплату не делают, следующий шаг - официальная защита права.',
+            },
+          ],
+          evidenceResult: 'Для такого спора важны доказательства смен, обещанной оплаты и условий, по которым Артём соглашался работать. Выписка полезна позже, но не заменяет подтверждение самих смен и ставки.',
           law: `Трудовые права защищаются письменными обращениями и доказательствами: графиком, перепиской, договором, расчётом и выпиской. ${commonLawNote}`,
         },
         dialogue: [
@@ -207,7 +254,7 @@ export const novelLocations: NovelLocation[] = [
         gender: 'Мужской',
         role: 'Студент',
         relationship: 'Сосед по парте',
-        portrait: '/assets/characters/marat.png',
+        portrait: '/assets/characters/marat.webp',
         color: '#f59e0b',
         position: { left: 76, top: 52 },
         storyTitle: 'Буллинг в чате',
@@ -239,7 +286,7 @@ export const novelLocations: NovelLocation[] = [
         gender: 'Женский',
         role: 'Продавец',
         relationship: 'Знакомая',
-        portrait: '/assets/characters/aigerim.png',
+        portrait: '/assets/characters/aigerim.webp',
         color: '#ec4899',
         position: { left: 25, top: 48 },
         storyTitle: 'Испытательный срок',
@@ -260,7 +307,7 @@ export const novelLocations: NovelLocation[] = [
         gender: 'Мужской',
         role: 'Работодатель',
         relationship: 'Руководитель смены',
-        portrait: '/assets/characters/bolat.png',
+        portrait: '/assets/characters/bolat.webp',
         color: '#6366f1',
         position: { left: 54, top: 34 },
         storyTitle: 'Сверхурочные',
@@ -281,7 +328,7 @@ export const novelLocations: NovelLocation[] = [
         gender: 'Мужской',
         role: 'Водитель',
         relationship: 'Коллега',
-        portrait: '/assets/characters/serik.png',
+        portrait: '/assets/characters/serik.webp',
         color: '#14b8a6',
         position: { left: 75, top: 50 },
         storyTitle: 'Штраф из зарплаты',
@@ -313,7 +360,7 @@ export const novelLocations: NovelLocation[] = [
         gender: 'Мужской',
         role: 'Полицейский',
         relationship: 'Инспектор',
-        portrait: '/assets/characters/ruslan.png',
+        portrait: '/assets/characters/ruslan.webp',
         color: '#2563eb',
         position: { left: 22, top: 46 },
         storyTitle: 'Проверка документов',
@@ -334,7 +381,7 @@ export const novelLocations: NovelLocation[] = [
         gender: 'Женский',
         role: 'Продавец',
         relationship: 'Сотрудник магазина',
-        portrait: '/assets/characters/madina.png',
+        portrait: '/assets/characters/madina.webp',
         color: '#db2777',
         position: { left: 54, top: 38 },
         storyTitle: 'Возврат товара',
@@ -355,7 +402,7 @@ export const novelLocations: NovelLocation[] = [
         gender: 'Мужской',
         role: 'Прохожий',
         relationship: 'Свидетель',
-        portrait: '/assets/characters/oleg.png',
+        portrait: '/assets/characters/oleg.webp',
         color: '#84cc16',
         position: { left: 78, top: 50 },
         storyTitle: 'ДТП во дворе',
