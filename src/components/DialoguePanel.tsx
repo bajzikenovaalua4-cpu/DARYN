@@ -4,7 +4,8 @@ import { NpcPortrait } from './NpcPortrait';
 import { SpritePlayer } from './SpritePlayer';
 import type { CharacterId } from '../lib/characters';
 import { t, type Language } from '../lib/i18n';
-import type { NovelChoice, NovelLocation, NovelNpc } from '../lib/visualNovelData';
+import { getNpcIntroLines } from '../lib/npcRelationshipData';
+import type { DialogueLine, NovelChoice, NovelLocation, NovelNpc } from '../lib/visualNovelData';
 
 type DialoguePanelProps = {
   language: Language;
@@ -14,6 +15,8 @@ type DialoguePanelProps = {
   playerName: string;
   hintAvailable?: boolean;
   onUseHint?: () => void;
+  relationshipScore?: number;
+  completedBefore?: boolean;
   onComplete: (choice: NovelChoice) => void;
   onCancel: () => void;
 };
@@ -26,12 +29,15 @@ export function DialoguePanel({
   playerName,
   hintAvailable,
   onUseHint,
+  relationshipScore = 0,
+  completedBefore = false,
   onComplete,
   onCancel,
 }: DialoguePanelProps) {
   const [lineIndex, setLineIndex] = useState(0);
   const [choice, setChoice] = useState<NovelChoice | null>(null);
-  const line = npc.dialogue[lineIndex];
+  const dialogue: DialogueLine[] = [...getNpcIntroLines(npc.id, relationshipScore, completedBefore, playerName), ...npc.dialogue];
+  const line = dialogue[lineIndex];
 
   if (choice) {
     return (
@@ -59,8 +65,10 @@ export function DialoguePanel({
           <LegalCasePanel
             language={language}
             npc={npc}
+            playerName={playerName}
             hintAvailable={hintAvailable}
             onUseHint={onUseHint}
+            relationshipScore={relationshipScore}
             onComplete={onComplete}
           />
         </div>

@@ -1804,6 +1804,56 @@ time { color: var(--muted); font-size: 14px; }
   font-weight: 800;
 }
 
+.vn-loading {
+  width: min(560px, calc(100vw - 32px));
+  margin: 16vh auto 0;
+  text-align: center;
+}
+
+.vn-loading p {
+  color: #dbeafe;
+  font-weight: 800;
+}
+
+.vn-notice {
+  position: fixed;
+  left: 50%;
+  top: 18px;
+  z-index: 30;
+  width: min(560px, calc(100vw - 32px));
+  margin: 0;
+  padding: 12px 16px;
+  border: 1px solid rgba(125, 211, 252, 0.72);
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.88);
+  color: #f8fafc;
+  font-weight: 800;
+  text-align: center;
+  transform: translateX(-50%);
+  box-shadow: 0 18px 48px rgba(2, 6, 23, 0.28);
+  backdrop-filter: blur(10px);
+}
+
+.vn-npc-reaction {
+  margin: 16px 0;
+  padding: 14px 16px;
+  border: 1px solid color-mix(in srgb, var(--vn-accent-2) 42%, rgba(255, 255, 255, 0.18));
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.52);
+  color: #f8fafc;
+}
+
+.vn-npc-reaction strong {
+  display: block;
+  margin-bottom: 6px;
+  color: #ffffff;
+}
+
+.vn-npc-reaction p {
+  margin: 0;
+  color: #e5e7eb;
+}
+
 .vn-secret {
   width: 100%;
   padding: 16px;
@@ -2445,6 +2495,136 @@ time { color: var(--muted); font-size: 14px; }
   font-weight: 900;
 }
 
+.vn-secret-scene .vn-final-trial {
+  width: min(94vw, 1080px);
+  max-height: calc(100vh - 48px);
+  overflow: auto;
+  text-align: left;
+}
+
+.vn-final-trial > p,
+.vn-final-trial > h1,
+.vn-final-trial > .vn-kicker {
+  text-align: center;
+}
+
+.vn-final-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.vn-final-stats span,
+.vn-final-card,
+.vn-final-verdict,
+.vn-final-reward {
+  border: 1px solid rgba(250, 204, 21, 0.22);
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.58);
+}
+
+.vn-final-stats span {
+  display: grid;
+  gap: 4px;
+  min-height: 76px;
+  padding: 12px;
+  color: #e2e8f0;
+}
+
+.vn-final-stats b {
+  color: #facc15;
+  font-size: 24px;
+}
+
+.vn-final-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 18px 0;
+}
+
+.vn-final-card {
+  padding: 14px;
+}
+
+.vn-final-card h2 {
+  margin: 0 0 10px;
+  color: #ffffff;
+  font-size: 18px;
+}
+
+.vn-final-card ul {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.vn-final-card li {
+  display: grid;
+  gap: 4px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.12);
+}
+
+.vn-final-card li:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.vn-final-card b {
+  color: #fef3c7;
+}
+
+.vn-final-card span,
+.vn-final-card small,
+.vn-final-reward figcaption {
+  color: #cbd5e1;
+}
+
+.vn-final-card p,
+.vn-final-card small {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.vn-final-verdict {
+  margin: 18px 0;
+  padding: 16px;
+  text-align: center;
+}
+
+.vn-final-verdict strong {
+  color: #facc15;
+  font-size: 20px;
+}
+
+.vn-final-verdict p {
+  margin-top: 8px;
+}
+
+.vn-final-reward {
+  margin: 18px auto;
+  padding: 12px;
+  text-align: center;
+}
+
+.vn-final-reward img {
+  display: block;
+  width: min(100%, 520px);
+  margin: 0 auto 8px;
+  border-radius: 8px;
+}
+
+.vn-final-trial > .vn-primary,
+.vn-final-trial > .vn-secondary {
+  display: flex;
+  margin: 12px auto 0;
+}
+
 .vn-location-select {
   max-width: 1180px;
   padding: 24px;
@@ -2803,6 +2983,13 @@ time { color: var(--muted); font-size: 14px; }
     width: min(100%, 440px);
     min-width: 0;
     padding: 20px;
+  }
+  .vn-secret-scene .vn-final-trial {
+    width: min(100%, 1080px);
+  }
+  .vn-final-stats,
+  .vn-final-grid {
+    grid-template-columns: 1fr;
   }
   .vn-character-grid,
   .vn-location-grid { grid-template-columns: 1fr; }
@@ -3477,7 +3664,7 @@ time { color: var(--muted); font-size: 14px; }
 }
 
 .vn-stage .vn-npc {
-  width: clamp(360px, 40vw, 620px);
+  width: clamp(330px, 36vw, 560px);
   min-height: 0;
   padding: 0;
   border: 0 !important;
@@ -3492,21 +3679,21 @@ time { color: var(--muted); font-size: 14px; }
 .vn-stage .vn-npc:nth-of-type(1) {
   left: 24% !important;
   top: auto !important;
-  bottom: -14%;
+  bottom: -4%;
   z-index: 5;
 }
 
 .vn-stage .vn-npc:nth-of-type(2) {
   left: 50% !important;
   top: auto !important;
-  bottom: -10%;
+  bottom: -2%;
   z-index: 7;
 }
 
 .vn-stage .vn-npc:nth-of-type(3) {
   left: 76% !important;
   top: auto !important;
-  bottom: -14%;
+  bottom: -4%;
   z-index: 6;
 }
 
@@ -3517,8 +3704,8 @@ time { color: var(--muted); font-size: 14px; }
 }
 
 .vn-stage .vn-npc-avatar {
-  width: clamp(370px, 41vw, 640px);
-  height: clamp(620px, 88vh, 900px);
+  width: clamp(340px, 37vw, 580px);
+  height: clamp(520px, 72vh, 760px);
   border: 0;
   border-radius: 0;
   background: transparent !important;
@@ -3574,27 +3761,27 @@ time { color: var(--muted); font-size: 14px; }
   }
 
   .vn-stage .vn-npc {
-    width: clamp(230px, 50vw, 390px);
+    width: clamp(210px, 46vw, 350px);
   }
 
   .vn-stage .vn-npc-avatar {
-    width: clamp(240px, 52vw, 410px);
-    height: clamp(430px, 72vh, 650px);
+    width: clamp(220px, 48vw, 370px);
+    height: clamp(360px, 62vh, 560px);
   }
 
   .vn-stage .vn-npc:nth-of-type(1) {
     left: 18% !important;
-    bottom: -14%;
+    bottom: -4%;
   }
 
   .vn-stage .vn-npc:nth-of-type(2) {
     left: 50% !important;
-    bottom: -10%;
+    bottom: -2%;
   }
 
   .vn-stage .vn-npc:nth-of-type(3) {
     left: 82% !important;
-    bottom: -14%;
+    bottom: -4%;
   }
 }
 

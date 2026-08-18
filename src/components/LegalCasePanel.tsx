@@ -1,18 +1,21 @@
 import { useMemo, useState } from 'react';
 import { t, type Language } from '../lib/i18n';
+import { getNpcCaseReactionLines } from '../lib/npcRelationshipData';
 import type { CaseAction, CaseEvidence, CaseSequenceStep, NovelChoice, NovelNpc } from '../lib/visualNovelData';
 
 type LegalCasePanelProps = {
   language: Language;
   npc: NovelNpc;
+  playerName: string;
   hintAvailable?: boolean;
   onUseHint?: () => void;
+  relationshipScore?: number;
   onComplete: (choice: NovelChoice) => void;
 };
 
 type Step = 'action' | 'action-result' | 'evidence' | 'evidence-result' | 'sequence' | 'sequence-result' | 'final';
 
-export function LegalCasePanel({ language, npc, hintAvailable = false, onUseHint, onComplete }: LegalCasePanelProps) {
+export function LegalCasePanel({ language, npc, playerName, hintAvailable = false, onUseHint, onComplete }: LegalCasePanelProps) {
   const legalCase = npc.legalCase;
   const [step, setStep] = useState<Step>('action');
   const [actionIds, setActionIds] = useState<string[]>([]);
@@ -37,6 +40,7 @@ export function LegalCasePanel({ language, npc, hintAvailable = false, onUseHint
   const sequenceCorrect = !hasSequence || sameIdsInOrder(sequenceIds, sequenceSteps.map((item) => item.id));
   const points = actionPoints + (evidenceCorrect ? legalCase.evidencePoints : 0);
   const caseSummary = buildCaseSummary(language, selectedActions, legalCase.actions, legalCase.evidence, evidenceIds, sequenceSteps, sequenceIds);
+  const reactionLines = getNpcCaseReactionLines(npc.id, npc.name, caseSummary.percent, playerName);
 
   const completeCase = () => {
     onComplete({
@@ -313,6 +317,13 @@ export function LegalCasePanel({ language, npc, hintAvailable = false, onUseHint
       </div>
       <strong>{t(language, 'lawKz')}</strong>
       <p>{legalCase.law}</p>
+      <article className="vn-npc-reaction">
+        {reactionLines.map((item) => (
+          <p key={item.id}>
+            <strong>{item.speaker}:</strong> {item.text}
+          </p>
+        ))}
+      </article>
       <button className="vn-primary" type="button" onClick={completeCase}>
         {t(language, 'finishCase')}
       </button>

@@ -60,6 +60,9 @@ export function GamePage() {
     (window.localStorage.getItem(languageKey) as Language | null) ?? 'ru'
   ));
   const [progress, setProgress] = useState<NovelProgress>(emptyProgress);
+  const [isAuthReady, setIsAuthReady] = useState(!isSupabaseConfigured);
+  const [isProgressLoading, setIsProgressLoading] = useState(false);
+  const [notice, setNotice] = useState('');
   const [onboardingSeen, setOnboardingSeen] = useState(() => window.localStorage.getItem(onboardingKey) === 'true');
   const [scoreBurstKey, setScoreBurstKey] = useState(0);
   const [screen, setScreen] = useState<GameScreen>('setup');
@@ -88,9 +91,16 @@ export function GamePage() {
   useEffect(() => {
     if (!isSupabaseConfigured) return undefined;
 
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
-    });
+    supabase.auth.getSession()
+      .then(({ data }) => {
+        setSession(data.session);
+      })
+      .catch(() => {
+        setNotice('Не удалось проверить вход. Можно продолжить в гостевом режиме или обновить страницу.');
+      })
+      .finally(() => {
+        setIsAuthReady(true);
+      });
 
     const { data: listener } = supabase.auth.onAuthStateChange((_event, nextSession) => {
       setSession(nextSession);
@@ -112,11 +122,22 @@ export function GamePage() {
     if (!session) return;
 
     let cancelled = false;
-    void loadSupabaseProgress(userId).then((cloudProgress) => {
-      if (cancelled || !cloudProgress) return;
-      setProgress(cloudProgress);
-      saveLocalProgress(userId, cloudProgress);
-    });
+    setIsProgressLoading(true);
+    setNotice('');
+    void loadSupabaseProgress(userId)
+      .then((cloudProgress) => {
+        if (cancelled || !cloudProgress) return;
+        setProgress(cloudProgress);
+        saveLocalProgress(userId, cloudProgress);
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setNotice('Облачный прогресс сейчас не загрузился. Открыли локальную сохранённую версию.');
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setIsProgressLoading(false);
+      });
 
     return () => {
       cancelled = true;
@@ -164,6 +185,12 @@ export function GamePage() {
     </>
   );
 
+  const showCloudSaveNotice = (error: string | null) => {
+    if (error) {
+      setNotice('Сохранено на устройстве. Облачная синхронизация сейчас недоступна, попробуй позже.');
+    }
+  };
+
   const completeSetup = (profile: PlayerProfile) => {
     const nextProgress = { ...progress, profile };
     updateProgress(nextProgress);
@@ -176,7 +203,8 @@ export function GamePage() {
         nextProgress.secretUnlocked,
         nextProgress.shopPurchases,
         nextProgress.shopSpent,
-      );
+        nextProgress.relationshipScores,
+      ).then(showCloudSaveNotice);
     }
 
     setScreen(onboardingSeen ? 'confirm' : 'welcome');
@@ -214,7 +242,16 @@ export function GamePage() {
     updateProgress(nextProgress);
 
     if (session) {
-      void saveProfileToSupabase(userId, progress.profile, legalLiteracy, progress.secretUnlocked, shopPurchases, shopSpent);
+      void saveProfileToSupabase(
+        userId,
+        progress.profile,
+        legalLiteracy,
+        progress.secretUnlocked,
+        shopPurchases,
+        shopSpent,
+        progress.relationshipScores,
+      )
+        .then(showCloudSaveNotice);
     }
   };
 
@@ -238,7 +275,8 @@ export function GamePage() {
         progress.secretUnlocked,
         shopPurchases,
         progress.shopSpent,
-      );
+        progress.relationshipScores,
+      ).then(showCloudSaveNotice);
     }
   };
 
@@ -258,13 +296,17 @@ export function GamePage() {
     const earnedXp = completed.reduce((sum, item) => sum + item.points, 0);
     const legalLiteracy = Math.max(0, earnedXp - progress.shopSpent);
     const secretUnlocked = completed.length >= totalNpcCount;
-    const nextProgress = { ...progress, completed, legalLiteracy, secretUnlocked };
+    const relationshipScores = {
+      ...progress.relationshipScores,
+      [activeNpc.id]: Math.max(-4, Math.min(10, (progress.relationshipScores[activeNpc.id] ?? 0) + getRelationshipDelta(choice))),
+    };
+    const nextProgress = { ...progress, completed, legalLiteracy, relationshipScores, secretUnlocked };
 
     updateProgress(nextProgress);
     if (result.points > 0) setScoreBurstKey((value) => value + 1);
 
     if (session) {
-      void saveNpcToSupabase(userId, result);
+      void saveNpcToSupabase(userId, result).then(showCloudSaveNotice);
       if (nextProgress.profile) {
         void saveProfileToSupabase(
           userId,
@@ -273,7 +315,8 @@ export function GamePage() {
           secretUnlocked,
           nextProgress.shopPurchases,
           nextProgress.shopSpent,
-        );
+          relationshipScores,
+        ).then(showCloudSaveNotice);
       }
     }
 
@@ -281,10 +324,27 @@ export function GamePage() {
     setScreen(activeLocation.npcs.every((npc) => completed.some((item) => item.npcId === npc.id)) ? 'reward' : 'scene');
   };
 
+  if (!isAuthReady) {
+    return (
+      <main className={shellClassName}>
+        <section className="vn-panel vn-loading">
+          <span className="vn-kicker">Law Quest KZ</span>
+          <h1>Загружаем игру</h1>
+          <p>Проверяем вход и подготавливаем сохранения.</p>
+        </section>
+      </main>
+    );
+  }
+
+  const noticeBanner = (notice || isProgressLoading) && (
+    <p className="vn-notice">{isProgressLoading ? 'Синхронизируем сохранение...' : notice}</p>
+  );
+
   if (!canPlay) {
     return (
       <main className={shellClassName}>
         {gameTools}
+        {noticeBanner}
         <NovelAuthGate session={session} />
       </main>
     );
@@ -294,6 +354,7 @@ export function GamePage() {
     return (
       <main className={shellClassName}>
         {gameTools}
+        {noticeBanner}
         <CharacterSetup language={language} onComplete={completeSetup} onBack={exitToRegister} />
       </main>
     );
@@ -303,6 +364,7 @@ export function GamePage() {
     return (
       <main className={shellClassName}>
         {gameTools}
+        {noticeBanner}
         <section className="vn-panel vn-onboarding">
           <span className="vn-kicker">{t(language, 'welcomeLabel')}</span>
           <h1>{t(language, 'welcomeTitle')}</h1>
@@ -319,6 +381,7 @@ export function GamePage() {
     return (
       <main className={shellClassName}>
         {gameTools}
+        {noticeBanner}
         <section className="vn-panel vn-confirm">
           <button className="vn-secondary" onClick={resetPlayerSetup}>{t(language, 'back')}</button>
           <span className="vn-kicker">{t(language, 'step')} 4</span>
@@ -340,6 +403,7 @@ export function GamePage() {
     return (
       <main className={shellClassName}>
         {gameTools}
+        {noticeBanner}
         <DialoguePanel
           language={language}
           location={activeLocation}
@@ -348,6 +412,8 @@ export function GamePage() {
           playerName={progress.profile.name}
           hintAvailable={hintAvailable}
           onUseHint={useHintItem}
+          relationshipScore={progress.relationshipScores[activeNpc.id] ?? 0}
+          completedBefore={completedNpcIds.includes(activeNpc.id)}
           onComplete={completeNpc}
           onCancel={() => setScreen('scene')}
         />
@@ -364,6 +430,7 @@ export function GamePage() {
     return (
       <main className={shellClassName}>
         {gameTools}
+        {noticeBanner}
         <LocationReward
           language={language}
           location={activeLocation}
@@ -378,7 +445,14 @@ export function GamePage() {
     return (
       <main className={shellClassName}>
         {gameTools}
-        <SecretScene language={language} legalLiteracy={progress.legalLiteracy} onBack={() => setScreen('locations')} />
+        {noticeBanner}
+        <SecretScene
+          language={language}
+          legalLiteracy={progress.legalLiteracy}
+          completed={progress.completed}
+          relationshipScores={progress.relationshipScores}
+          onBack={() => setScreen('locations')}
+        />
       </main>
     );
   }
@@ -387,6 +461,7 @@ export function GamePage() {
     return (
       <main className={shellClassName}>
         {gameTools}
+        {noticeBanner}
         <ShopPanel
           language={language}
           xp={progress.legalLiteracy}
@@ -404,6 +479,7 @@ export function GamePage() {
     return (
       <main className={shellClassName}>
         {gameTools}
+        {noticeBanner}
         <LocationScene
           language={language}
           location={activeLocation}
@@ -423,6 +499,7 @@ export function GamePage() {
   return (
     <main className={shellClassName}>
       {gameTools}
+      {noticeBanner}
       <LocationSelect
         language={language}
         locations={novelLocations}
@@ -443,4 +520,11 @@ function getActiveThemeItemId(themeId: InterfaceThemeId) {
 
 function getShopThemeId(itemId: string): InterfaceThemeId | null {
   return itemId in shopThemeMap ? shopThemeMap[itemId as keyof typeof shopThemeMap] : null;
+}
+
+function getRelationshipDelta(choice: NovelChoice) {
+  if (choice.correct && choice.points >= 8) return 2;
+  if (choice.correct) return 1;
+  if (choice.points > 0) return 0;
+  return -1;
 }

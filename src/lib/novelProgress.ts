@@ -17,6 +17,7 @@ export type NovelProgress = {
   legalLiteracy: number;
   shopPurchases: string[];
   shopSpent: number;
+  relationshipScores: Record<string, number>;
   secretUnlocked: boolean;
 };
 
@@ -29,6 +30,7 @@ type ProfileRow = {
   legal_literacy: number;
   shop_purchases?: string[];
   shop_spent?: number;
+  relationship_scores?: Record<string, number>;
   secret_unlocked: boolean;
 };
 
@@ -52,6 +54,7 @@ export function emptyProgress(): NovelProgress {
     legalLiteracy: 0,
     shopPurchases: [],
     shopSpent: 0,
+    relationshipScores: {},
     secretUnlocked: false,
   };
 }
@@ -61,7 +64,14 @@ function normalizeProgress(progress: NovelProgress) {
     ...progress,
     shopPurchases: Array.isArray(progress.shopPurchases) ? progress.shopPurchases : [],
     shopSpent: typeof progress.shopSpent === 'number' ? progress.shopSpent : 0,
+    relationshipScores: isNumberRecord(progress.relationshipScores) ? progress.relationshipScores : {},
   };
+}
+
+function isNumberRecord(value: unknown): value is Record<string, number> {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+
+  return Object.values(value).every((item) => typeof item === 'number');
 }
 
 export function loadLocalProgress(userId: string) {
@@ -79,23 +89,33 @@ export function saveLocalProgress(userId: string, progress: NovelProgress) {
   window.localStorage.setItem(`${baseKey}:${userId}`, JSON.stringify(progress));
 }
 
+function getProgressErrorMessage(action: string, message: string) {
+  return `${action}: ${message}`;
+}
+
 export async function loadSupabaseProgress(userId: string) {
   if (!isSupabaseConfigured) return null;
 
   const { data: profileData, error: profileError } = await supabase
     .from('vn_profiles')
-    .select('player_name, character_id, gender, legal_literacy, shop_purchases, shop_spent, secret_unlocked')
+    .select('player_name, character_id, gender, legal_literacy, shop_purchases, shop_spent, relationship_scores, secret_unlocked')
     .eq('user_id', userId)
     .maybeSingle();
 
-  if (profileError || !profileData) return null;
+  if (profileError) {
+    throw new Error(getProgressErrorMessage('Не удалось загрузить профиль', profileError.message));
+  }
+
+  if (!profileData) return null;
 
   const { data: npcData, error: npcError } = await supabase
     .from('vn_npc_progress')
     .select('location_id, npc_id, answers, score_delta, completed_at')
     .eq('user_id', userId);
 
-  if (npcError) return null;
+  if (npcError) {
+    throw new Error(getProgressErrorMessage('Не удалось загрузить прогресс историй', npcError.message));
+  }
 
   const profile = profileData as ProfileRow;
   const rows = (npcData ?? []) as NpcProgressRow[];
@@ -110,6 +130,8 @@ export async function loadSupabaseProgress(userId: string) {
       completedAt: answer?.completedAt ?? row.completed_at,
     };
   });
+  const shopSpent = typeof profile.shop_spent === 'number' ? profile.shop_spent : 0;
+  const earnedXp = completed.reduce((sum, item) => sum + item.points, 0);
 
   return {
     profile: {
@@ -118,9 +140,10 @@ export async function loadSupabaseProgress(userId: string) {
       gender: profile.gender,
     },
     completed,
-    legalLiteracy: profile.legal_literacy,
+    legalLiteracy: Math.max(profile.legal_literacy, Math.max(0, earnedXp - shopSpent)),
     shopPurchases: Array.isArray(profile.shop_purchases) ? profile.shop_purchases : [],
-    shopSpent: typeof profile.shop_spent === 'number' ? profile.shop_spent : 0,
+    shopSpent,
+    relationshipScores: isNumberRecord(profile.relationship_scores) ? profile.relationship_scores : {},
     secretUnlocked: profile.secret_unlocked,
   } satisfies NovelProgress;
 }
@@ -132,6 +155,7 @@ export async function saveProfileToSupabase(
   secretUnlocked: boolean,
   shopPurchases: string[] = [],
   shopSpent = 0,
+  relationshipScores: Record<string, number> = {},
 ) {
   if (!isSupabaseConfigured) return null;
 
@@ -143,11 +167,12 @@ export async function saveProfileToSupabase(
     legal_literacy: legalLiteracy,
     shop_purchases: shopPurchases,
     shop_spent: shopSpent,
+    relationship_scores: relationshipScores,
     secret_unlocked: secretUnlocked,
     updated_at: new Date().toISOString(),
   }, { onConflict: 'user_id' });
 
-  return error?.message ?? null;
+  return error ? getProgressErrorMessage('Не удалось сохранить профиль', error.message) : null;
 }
 
 export async function saveNpcToSupabase(userId: string, result: CompletedNpc) {
@@ -169,5 +194,5 @@ export async function saveNpcToSupabase(userId: string, result: CompletedNpc) {
     completed_at: result.completedAt,
   }, { onConflict: 'user_id,npc_id' });
 
-  return error?.message ?? null;
+  return error ? getProgressErrorMessage('Не удалось сохранить историю', error.message) : null;
 }

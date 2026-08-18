@@ -42,7 +42,7 @@ export function Auth({ initialMode = 'signin', allowModeSwitch = true, redirectT
       options: { redirectTo: `${window.location.origin}${redirectTo}` },
     });
     if (error) {
-      setMessage(error.message);
+      setMessage(getFriendlyAuthMessage(error.message));
       setBusy(false);
     }
   }
@@ -61,7 +61,7 @@ export function Auth({ initialMode = 'signin', allowModeSwitch = true, redirectT
       : await supabase.auth.signInWithPassword({ email, password });
 
     if (result.error) {
-      setMessage(result.error.message);
+      setMessage(getFriendlyAuthMessage(result.error.message));
       setBusy(false);
       return;
     }
@@ -144,4 +144,21 @@ export function Auth({ initialMode = 'signin', allowModeSwitch = true, redirectT
       )}
     </section>
   );
+}
+
+function getFriendlyAuthMessage(message: string) {
+  const normalized = message.toLowerCase();
+  if (normalized.includes('invalid login credentials')) {
+    return 'Почта или пароль не подошли. Проверь данные и попробуй ещё раз.';
+  }
+  if (normalized.includes('email not confirmed')) {
+    return 'Почта ещё не подтверждена. Открой письмо от Supabase и перейди по ссылке.';
+  }
+  if (normalized.includes('already registered') || normalized.includes('already exists')) {
+    return 'Такой аккаунт уже есть. Попробуй войти вместо регистрации.';
+  }
+  if (normalized.includes('network') || normalized.includes('fetch')) {
+    return 'Не получилось подключиться к серверу. Проверь интернет и повтори попытку.';
+  }
+  return 'Что-то пошло не так. Попробуй ещё раз через минуту.';
 }
